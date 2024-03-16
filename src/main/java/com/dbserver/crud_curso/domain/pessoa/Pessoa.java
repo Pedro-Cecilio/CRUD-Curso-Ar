@@ -9,12 +9,21 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
 
 @MappedSuperclass
+@Getter
 public abstract class Pessoa implements UserDetails {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(unique = true, nullable = false)
     private String email;
