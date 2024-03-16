@@ -47,11 +47,51 @@ public abstract class Pessoa implements UserDetails {
     public Pessoa(String email, String senha, SimpleGrantedAuthority autoridade, String nome, String sobrenome,
             Long idade) {
         this.email = email;
-        this.senha = senha;
+        this.setSenha(senha);
         this.autoridades.add(autoridade);
-        this.nome = nome;
-        this.sobrenome = sobrenome;
-        this.idade = idade;
+        this.setNome(nome);
+        this.setSobrenome(sobrenome);
+        this.setIdade(idade);
+    }
+
+    protected void atualizarDados(String senha, String nome, String sobrenome,
+            Long idade) {
+        setSenha(senha != null && !senha.isEmpty() ? senha : this.senha);
+        setNome(nome != null && !nome.isEmpty() ? nome : this.nome);
+        setSobrenome(sobrenome != null && !sobrenome.isEmpty() ? sobrenome : this.sobrenome);
+        setIdade(idade != null ? idade : this.idade);
+    }
+
+    public void setSenha(String senha) {
+        if (senha == null)
+            throw new IllegalArgumentException("Senha deve ser informada");
+        if (senha.trim().length() < 8)
+            throw new IllegalArgumentException("Senha deve conter 8 caracteres no mínimo");
+        this.senha = senha.trim();
+    }
+
+    public void setNome(String nome) {
+        if (nome == null)
+            throw new IllegalArgumentException("Nome deve ser informado");
+        if (nome.trim().length() < 8 || nome.trim().length() > 20)
+            throw new IllegalArgumentException("Nome deve conter 3 caracteres no mínimo e 20 no máximo");
+        this.nome = nome.trim();
+    }
+
+    public void setSobrenome(String sobrenome) {
+        if (sobrenome == null)
+            throw new IllegalArgumentException("Sobrenome deve ser informado");
+        if (sobrenome.trim().length() < 8 || sobrenome.trim().length() > 20)
+            throw new IllegalArgumentException("Sobrenome deve conter 2 caracteres no mínimo e 20 no máximo");
+        this.sobrenome = sobrenome.trim();
+    }
+
+    public void setIdade(Long idade) {
+        if (idade == null)
+            throw new IllegalArgumentException("idade deve ser informada");
+        if (idade < 6 || idade > 110)
+            throw new IllegalArgumentException("Idade deve ser maior do que 6 e menor que 110");
+        this.sobrenome = sobrenome.trim();
     }
 
     @Override
