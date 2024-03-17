@@ -23,38 +23,54 @@ public class AlunoService {
         this.alunoRepository = alunoRepository;
     }
 
-    public void criarAluno(CriarAlunoDto alunoDto){
-        Optional<Professor> professor = professorRepository.findByEmail(alunoDto.email());
-        if(professor.isPresent()){
+    public Aluno criarAluno(CriarAlunoDto alunoDto) {
+        boolean emailJaExiste = this.verificarSeEmailExiste(alunoDto.email());
+        if (emailJaExiste) {
             throw new IllegalArgumentException("Email não disponível");
         }
         Aluno aluno = new Aluno(alunoDto);
         this.alunoRepository.save(aluno);
+        return aluno;
     }
 
-    public Aluno atualizarAluno(AtualizarDadosAlunoDto novosDados, Aluno aluno){
-        aluno.atualizarDadosAluno(novosDados);
-        return this.alunoRepository.save(aluno);
-    }
-
-    public void deletarAluno(Long alunoId){
+    public Aluno atualizarAluno(AtualizarDadosAlunoDto novosDados, Long alunoId) {
         Optional<Aluno> aluno = this.alunoRepository.findById(alunoId);
-        if(aluno.isEmpty()){
+        if (aluno.isEmpty()) {
+            throw new NoSuchElementException("Aluno não encontrado.");
+        }
+        aluno.get().atualizarDadosAluno(novosDados);
+        this.alunoRepository.save(aluno.get());
+        return aluno.get();
+    }
+
+    public void deletarAluno(Long alunoId) {
+        Optional<Aluno> aluno = this.alunoRepository.findById(alunoId);
+        if (aluno.isEmpty()) {
             throw new NoSuchElementException("Aluno não encontrado.");
         }
         this.alunoRepository.delete(aluno.get());
     }
 
-    public List<AlunoRespostaDto> listarTodosAlunos(Pageable pageable){
+    public List<AlunoRespostaDto> listarTodosAlunos(Pageable pageable) {
         Page<Aluno> pessoas = this.alunoRepository.findAll(pageable);
         return pessoas.stream().map(AlunoRespostaDto::new).toList();
     }
 
-    public AlunoRespostaDto pegarAluno(Long alunoId){
+    public AlunoRespostaDto pegarAluno(Long alunoId) {
         Optional<Aluno> aluno = this.alunoRepository.findById(alunoId);
-        if(aluno.isEmpty()){
+        if (aluno.isEmpty()) {
             throw new NoSuchElementException("Aluno não encontrado.");
         }
         return new AlunoRespostaDto(aluno.get());
     }
+
+    public boolean verificarSeEmailExiste(String email){
+        Optional<Professor> professor = professorRepository.findByEmail(email);
+        Optional<Aluno> alunoExistente = alunoRepository.findByEmail(email);
+        if (professor.isPresent() || alunoExistente.isPresent()) {
+            return true;
+        }
+        return false;
+    }
+    
 }

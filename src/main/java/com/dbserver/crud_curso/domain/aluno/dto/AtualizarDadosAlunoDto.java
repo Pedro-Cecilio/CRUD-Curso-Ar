@@ -1,7 +1,5 @@
 package com.dbserver.crud_curso.domain.aluno.dto;
 
-import com.dbserver.crud_curso.domain.enums.GrauEscolaridade;
-
 
 public record AtualizarDadosAlunoDto(
 
@@ -15,7 +13,7 @@ public record AtualizarDadosAlunoDto(
 
     Long idade,
 
-    GrauEscolaridade grauEscolaridade
+    String grauEscolaridade
 
 ) {
     

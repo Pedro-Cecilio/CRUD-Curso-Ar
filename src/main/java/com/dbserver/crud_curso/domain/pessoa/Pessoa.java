@@ -3,11 +3,10 @@ package com.dbserver.crud_curso.domain.pessoa;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
+import com.dbserver.crud_curso.utils.Utils;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -46,7 +45,7 @@ public abstract class Pessoa implements UserDetails {
 
     public Pessoa(String email, String senha, SimpleGrantedAuthority autoridade, String nome, String sobrenome,
             Long idade) {
-        this.email = email;
+        this.setEmail(email);
         this.setSenha(senha);
         this.autoridades.add(autoridade);
         this.setNome(nome);
@@ -62,6 +61,13 @@ public abstract class Pessoa implements UserDetails {
         setIdade(idade != null ? idade : this.idade);
     }
 
+    public void setEmail(String email) {
+        if(!Utils.validarRegex(Utils.REGEX_EMAIL, email)){
+            throw new IllegalArgumentException("Email com formato inválido");
+        }
+        this.email = email;
+    }
+
     public void setSenha(String senha) {
         if (senha == null)
             throw new IllegalArgumentException("Senha deve ser informada");
@@ -73,7 +79,7 @@ public abstract class Pessoa implements UserDetails {
     public void setNome(String nome) {
         if (nome == null)
             throw new IllegalArgumentException("Nome deve ser informado");
-        if (nome.trim().length() < 8 || nome.trim().length() > 20)
+        if (nome.trim().length() < 3 || nome.trim().length() > 20)
             throw new IllegalArgumentException("Nome deve conter 3 caracteres no mínimo e 20 no máximo");
         this.nome = nome.trim();
     }
@@ -81,7 +87,7 @@ public abstract class Pessoa implements UserDetails {
     public void setSobrenome(String sobrenome) {
         if (sobrenome == null)
             throw new IllegalArgumentException("Sobrenome deve ser informado");
-        if (sobrenome.trim().length() < 8 || sobrenome.trim().length() > 20)
+        if (sobrenome.trim().length() < 2 || sobrenome.trim().length() > 20)
             throw new IllegalArgumentException("Sobrenome deve conter 2 caracteres no mínimo e 20 no máximo");
         this.sobrenome = sobrenome.trim();
     }
@@ -89,9 +95,9 @@ public abstract class Pessoa implements UserDetails {
     public void setIdade(Long idade) {
         if (idade == null)
             throw new IllegalArgumentException("idade deve ser informada");
-        if (idade < 6 || idade > 110)
+        if (idade < 7 || idade > 110)
             throw new IllegalArgumentException("Idade deve ser maior do que 6 e menor que 110");
-        this.sobrenome = sobrenome.trim();
+        this.idade = idade;
     }
 
     @Override
