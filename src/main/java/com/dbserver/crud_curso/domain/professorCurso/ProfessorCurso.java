@@ -29,4 +29,17 @@ public class ProfessorCurso {
 
     @Column(nullable = false)
     private Boolean criador;
+
+    @Column(nullable = false)
+    private Boolean ativo = true;
+
+    public ProfessorCurso(Professor professor, Curso curso, boolean criador) {
+        this.curso = curso;
+        this.criador = criador;
+        this.professor = professor;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
+    }
 }

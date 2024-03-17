@@ -18,8 +18,9 @@ public class Professor extends Pessoa {
 
 
     public Professor(String email, String senha, String nome, String sobrenome,
-            Long idade) {
+            Long idade, String grauAcademico) {
         super(email, senha, autoridade, nome, sobrenome, idade);
+        this.setGrauAcademico(grauAcademico);
     }
     public Professor(CriarProfessorDto dto){
         super(dto.email(), dto.senha(), autoridade, dto.nome(), dto.sobrenome(), dto.idade());

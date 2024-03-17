@@ -9,19 +9,33 @@ import java.util.NoSuchElementException;
 import java.util.List;
 import com.dbserver.crud_curso.domain.curso.dto.AtualizarDadosCursoDto;
 import com.dbserver.crud_curso.domain.curso.dto.CriarCursoDto;
+import com.dbserver.crud_curso.domain.professor.Professor;
+import com.dbserver.crud_curso.domain.professor.ProfessorRepository;
+import com.dbserver.crud_curso.domain.professorCurso.ProfessorCurso;
+import com.dbserver.crud_curso.domain.professorCurso.ProfessorCursoRepository;
 
 @Service
 public class CursoService {
 
     private CursoRepository cursoRepository;
+    private ProfessorRepository professorRepository;
+    private ProfessorCursoRepository professorCursoRepository;
 
-    public CursoService(CursoRepository cursoRepository) {
+    public CursoService(CursoRepository cursoRepository, ProfessorRepository professorRepository, ProfessorCursoRepository professorCursoRepository) {
         this.cursoRepository = cursoRepository;
+        this.professorRepository = professorRepository;
     }
 
-    public Curso criarCurso(CriarCursoDto cursoDto) {
+    public Curso criarCurso(CriarCursoDto cursoDto, Long professorId) {
+        Optional<Professor> professor = this.professorRepository.findById(professorId);
+        if (professor.isEmpty()) {
+            throw new NoSuchElementException("Professor não encontrado");
+        }
         Curso curso = new Curso(cursoDto);
         this.cursoRepository.save(curso);
+
+        ProfessorCurso professorCurso = new ProfessorCurso(professor.get(), curso, true);
+        this.professorCursoRepository.save(professorCurso);
         return curso;
     }
 
@@ -45,7 +59,7 @@ public class CursoService {
 
     public List<Curso> listarTodosCursos(Pageable pageable) {
         Page<Curso> cursos = this.cursoRepository.findAll(pageable);
-        return cursos.stream().toList();
+        return cursos.toList();
     }
 
     public Curso pegarCurso(Long cursoId) {

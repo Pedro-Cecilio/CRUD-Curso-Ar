@@ -3,6 +3,7 @@ package com.dbserver.crud_curso.domain.curso;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import java.util.stream.Stream;
@@ -24,6 +25,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import com.dbserver.crud_curso.domain.curso.dto.AtualizarDadosCursoDto;
 import com.dbserver.crud_curso.domain.curso.dto.CriarCursoDto;
+import com.dbserver.crud_curso.domain.professor.Professor;
+import com.dbserver.crud_curso.domain.professor.ProfessorRepository;
+import com.dbserver.crud_curso.domain.professorCurso.ProfessorCurso;
+import com.dbserver.crud_curso.domain.professorCurso.ProfessorCursoRepository;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
@@ -35,8 +40,14 @@ public class CursoServiceTest {
     private CursoRepository cursoRepository;
 
     @Mock
+    private ProfessorRepository professorRepository;
+    @Mock
+    private ProfessorCursoRepository professorCursoRepository;
+
+    @Mock
     private Pageable pageable;
 
+    private Professor professorMock;
     private Curso cursoMock;
     private CriarCursoDto criarCursoDto;
     private AtualizarDadosCursoDto atualizarDadosCursoDtoTodosDados;
@@ -60,16 +71,23 @@ public class CursoServiceTest {
                 null,
                 null,
                 null);
-
         this.cursoMock = new Curso(criarCursoDto);
+
+        this.professorMock = new Professor("exemplo@email.com",
+                "senha123",
+                "João",
+                "Silva",
+                25L,
+                "BACHAREL");
     }
 
     @Test
     @DisplayName("Deve ser possível criar um curso corretamente")
     void givenTenhoUmCriarCursoDtoWhenExecutoMetoCriarCursoThenCriarCursoERetornar() {
-
-        Curso curso = this.cursoService.criarCurso(this.criarCursoDto);
-        verify(this.cursoRepository).save(curso);
+        when(this.professorRepository.findById(1L)).thenReturn(Optional.of(this.professorMock));
+        Curso curso = this.cursoService.criarCurso(this.criarCursoDto, 1L);
+        verify(this.cursoRepository).save(curso); 
+        verify(this.professorCursoRepository).save(any(ProfessorCurso.class));
         assertEquals(this.criarCursoDto.titulo(), curso.getTitulo());
         assertEquals(this.criarCursoDto.duracaoMeses(), curso.getDuracaoMeses());
         assertEquals(this.criarCursoDto.grauAcademicoMinimo(), curso.getGrauAcademicoMinimo().toString());
@@ -90,10 +108,12 @@ public class CursoServiceTest {
     void givenTenhoUmCriarCursoDtoComDadosInvalidosWhenExecutoCriarCursoThenLancarUmErro(String titulo,
             Long duracaoEmMeses,
             String grauEscolaridadeMinimo, String grauAcademicoMinimo) {
+        when(this.professorRepository.findById(1L)).thenReturn(Optional.of(this.professorMock));
+
         CriarCursoDto criarCursoDto2 = new CriarCursoDto(titulo, duracaoEmMeses, grauEscolaridadeMinimo,
                 grauAcademicoMinimo);
 
-        assertThrows(IllegalArgumentException.class, () -> this.cursoService.criarCurso(criarCursoDto2));
+        assertThrows(IllegalArgumentException.class, () -> this.cursoService.criarCurso(criarCursoDto2, 1L));
     }
 
     @Test
