@@ -33,21 +33,15 @@ public class ProfessorService {
     }
 
     public Professor atualizarProfessor(AtualizarDadosProfessorDto novosDados, Long professorId) {
-        Optional<Professor> professor = this.professorRepository.findById(professorId);
-        if (professor.isEmpty()) {
-            throw new NoSuchElementException("Professor não encontrado.");
-        }
-        professor.get().atualizarDadosProfessor(novosDados);
-        this.professorRepository.save(professor.get());
-        return professor.get();
+        Professor professor = this.professorRepository.findById(professorId).orElseThrow(()-> new NoSuchElementException("Professor não encontrado."));
+        professor.atualizarDadosProfessor(novosDados);
+        this.professorRepository.save(professor);
+        return professor;
     }
 
     public void deletarProfessor(Long professorId) {
-        Optional<Professor> professor = this.professorRepository.findById(professorId);
-        if (professor.isEmpty()) {
-            throw new NoSuchElementException("Professor não encontrado.");
-        }
-        this.professorRepository.delete(professor.get());
+        Professor professor = this.professorRepository.findById(professorId).orElseThrow(()-> new NoSuchElementException("Professor não encontrado."));
+        this.professorRepository.delete(professor);
     }
 
     public List<ProfessorRespostaDto> listarTodosProfessores(Pageable pageable) {
@@ -56,11 +50,8 @@ public class ProfessorService {
     }
 
     public ProfessorRespostaDto pegarProfessor(Long professorId) {
-        Optional<Professor> professor = this.professorRepository.findById(professorId);
-        if (professor.isEmpty()) {
-            throw new NoSuchElementException("Professor não encontrado.");
-        }
-        return new ProfessorRespostaDto(professor.get());
+        Professor professor = this.professorRepository.findById(professorId).orElseThrow(()-> new NoSuchElementException("Professor não encontrado."));
+        return new ProfessorRespostaDto(professor);
     }
 
     public boolean verificarSeEmailExiste(String email) {

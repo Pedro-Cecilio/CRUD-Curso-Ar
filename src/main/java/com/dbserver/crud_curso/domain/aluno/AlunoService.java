@@ -34,21 +34,15 @@ public class AlunoService {
     }
 
     public Aluno atualizarAluno(AtualizarDadosAlunoDto novosDados, Long alunoId) {
-        Optional<Aluno> aluno = this.alunoRepository.findById(alunoId);
-        if (aluno.isEmpty()) {
-            throw new NoSuchElementException("Aluno não encontrado.");
-        }
-        aluno.get().atualizarDadosAluno(novosDados);
-        this.alunoRepository.save(aluno.get());
-        return aluno.get();
+        Aluno aluno = this.alunoRepository.findById(alunoId).orElseThrow(()->new NoSuchElementException("Aluno não encontrado."));
+        aluno.atualizarDadosAluno(novosDados);
+        this.alunoRepository.save(aluno);
+        return aluno;
     }
 
     public void deletarAluno(Long alunoId) {
-        Optional<Aluno> aluno = this.alunoRepository.findById(alunoId);
-        if (aluno.isEmpty()) {
-            throw new NoSuchElementException("Aluno não encontrado.");
-        }
-        this.alunoRepository.delete(aluno.get());
+        Aluno aluno = this.alunoRepository.findById(alunoId).orElseThrow(()->new NoSuchElementException("Aluno não encontrado."));
+        this.alunoRepository.delete(aluno);
     }
 
     public List<AlunoRespostaDto> listarTodosAlunos(Pageable pageable) {
@@ -57,14 +51,12 @@ public class AlunoService {
     }
 
     public AlunoRespostaDto pegarAluno(Long alunoId) {
-        Optional<Aluno> aluno = this.alunoRepository.findById(alunoId);
-        if (aluno.isEmpty()) {
-            throw new NoSuchElementException("Aluno não encontrado.");
-        }
-        return new AlunoRespostaDto(aluno.get());
+        Aluno aluno = this.alunoRepository.findById(alunoId).orElseThrow(()->new NoSuchElementException("Aluno não encontrado."));
+
+        return new AlunoRespostaDto(aluno);
     }
 
-    public boolean verificarSeEmailExiste(String email){
+    public boolean verificarSeEmailExiste(String email) {
         Optional<Professor> professor = professorRepository.findByEmail(email);
         Optional<Aluno> alunoExistente = alunoRepository.findByEmail(email);
         if (professor.isPresent() || alunoExistente.isPresent()) {
@@ -72,5 +64,5 @@ public class AlunoService {
         }
         return false;
     }
-    
+
 }
