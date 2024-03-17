@@ -27,12 +27,21 @@ public class AlunoCurso {
     @ManyToOne
     @JoinColumn(name = "curso_id", nullable = false)
     private Curso curso;
-
-    @Column(nullable = false)
-    private String numeroMatricula;
     
     @Column(nullable = false)
     private StatusMatricula statusMatricula;
 
+    public AlunoCurso(Aluno aluno, Curso curso){
+        this.aluno = aluno;
+        this.curso = curso;
+        this.statusMatricula = StatusMatricula.ATIVO;
+    }
 
+    public void setStatusMatricula(String statusMatricula){
+        try {
+            this.statusMatricula = StatusMatricula.valueOf(statusMatricula);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Status de matrícula inválido");
+        }
+    }
 }
