@@ -2,12 +2,15 @@ package com.dbserver.crud_curso.domain.curso;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
 import java.util.Optional;
 import java.util.NoSuchElementException;
 import java.util.List;
 import com.dbserver.crud_curso.domain.curso.dto.AtualizarDadosCursoDto;
 import com.dbserver.crud_curso.domain.curso.dto.CriarCursoDto;
 
+@Service
 public class CursoService {
 
     private CursoRepository cursoRepository;

@@ -2,6 +2,8 @@ package com.dbserver.crud_curso.domain.professor;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
 import java.util.Optional;
 import java.util.NoSuchElementException;
 import java.util.List;
@@ -11,8 +13,9 @@ import com.dbserver.crud_curso.domain.professor.dto.AtualizarDadosProfessorDto;
 import com.dbserver.crud_curso.domain.professor.dto.CriarProfessorDto;
 import com.dbserver.crud_curso.domain.professor.dto.ProfessorRespostaDto;
 
+@Service
 public class ProfessorService {
-     private AlunoRepository alunoRepository;
+    private AlunoRepository alunoRepository;
     private ProfessorRepository professorRepository;
 
     public ProfessorService(AlunoRepository alunoRepository, ProfessorRepository professorRepository) {
@@ -60,7 +63,7 @@ public class ProfessorService {
         return new ProfessorRespostaDto(professor.get());
     }
 
-    public boolean verificarSeEmailExiste(String email){
+    public boolean verificarSeEmailExiste(String email) {
         Optional<Professor> professor = professorRepository.findByEmail(email);
         Optional<Aluno> alunoExistente = alunoRepository.findByEmail(email);
         if (professor.isPresent() || alunoExistente.isPresent()) {
