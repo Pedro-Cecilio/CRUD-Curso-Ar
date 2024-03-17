@@ -1,11 +1,11 @@
-package com.dbserver.crud_curso.domain.aluno.dto;
+package com.dbserver.crud_curso.domain.professor.dto;
 
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public record CriarAlunoDto(
+public record CriarProfessorDto(
     @Email(message = "Email com formato inválido")
     @NotNull(message = "Email deve ser informado")
     String email,
@@ -25,8 +25,8 @@ public record CriarAlunoDto(
     @NotNull(message = "Idade deve ser informada")
     Long idade,
 
-    @NotNull(message = "Grau de Escolaridade deve ser informado")
-    String grauEscolaridade
+    @NotNull(message = "Grau acadêmico deve ser informado")
+    String grauAcademico
 
 ) {
     

@@ -22,9 +22,11 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import com.dbserver.crud_curso.domain.aluno.dto.AlunoRespostaDto;
 import com.dbserver.crud_curso.domain.aluno.dto.AtualizarDadosAlunoDto;
 import com.dbserver.crud_curso.domain.aluno.dto.CriarAlunoDto;
@@ -48,6 +50,9 @@ class AlunoServiceTest {
     @Mock
     private Pageable pageable;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    
     private CriarAlunoDto criarAlunoDto;
     private AtualizarDadosAlunoDto atualizarDadosAlunoDtoTodosDados;
     private AtualizarDadosAlunoDto atualizarDadosAlunoDtoUmDado;
@@ -87,7 +92,7 @@ class AlunoServiceTest {
         Aluno aluno = this.alunoService.criarAluno(this.criarAlunoDto);
         verify(this.alunoRepository).save(aluno);
         assertEquals(this.criarAlunoDto.email(), aluno.getEmail());
-        assertEquals(this.criarAlunoDto.senha(), aluno.getSenha());
+        assertTrue(this.passwordEncoder.matches(this.criarAlunoDto.senha(), aluno.getSenha()));
         assertEquals(this.criarAlunoDto.nome(), aluno.getNome());
         assertEquals(this.criarAlunoDto.sobrenome(), aluno.getSobrenome());
         assertEquals(this.criarAlunoDto.idade(), aluno.getIdade());
@@ -133,7 +138,7 @@ class AlunoServiceTest {
         Aluno aluno = this.alunoService.atualizarAluno(atualizarDadosAlunoDtoTodosDados, 1L);
 
         assertEquals(this.atualizarDadosAlunoDtoTodosDados.nome(), aluno.getNome());
-        assertEquals(this.atualizarDadosAlunoDtoTodosDados.senha(), aluno.getSenha());
+        assertTrue(this.passwordEncoder.matches(this.atualizarDadosAlunoDtoTodosDados.senha(), aluno.getSenha()));
         assertEquals(this.atualizarDadosAlunoDtoTodosDados.sobrenome(), aluno.getSobrenome());
         assertEquals(this.atualizarDadosAlunoDtoTodosDados.idade(), aluno.getIdade());
         assertEquals(this.atualizarDadosAlunoDtoTodosDados.grauEscolaridade(), aluno.getGrauEscolaridade().toString());
@@ -151,6 +156,14 @@ class AlunoServiceTest {
         assertNotEquals(this.atualizarDadosAlunoDtoUmDado.sobrenome(), aluno.getSobrenome());
         assertNotEquals(this.atualizarDadosAlunoDtoUmDado.idade(), aluno.getIdade());
         assertNotEquals(this.atualizarDadosAlunoDtoUmDado.grauEscolaridade(), aluno.getGrauEscolaridade().toString());
+    }
+
+    @Test
+    @DisplayName("Deve falhar ao tentar atualizar um aluno inexistete")
+    void givenTenhoUmAtualizarDadosAlunoDtoEAlunoIdInexistenteWhenExecutoMetodoParaAtualizarThenLancarErro() {
+        when(this.alunoRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(NoSuchElementException.class, () -> this.alunoService.atualizarAluno(atualizarDadosAlunoDtoTodosDados, 1L));
     }
 
     private static Stream<Arguments> argumentosDadosInvalidosParaAtualizarAluno() {

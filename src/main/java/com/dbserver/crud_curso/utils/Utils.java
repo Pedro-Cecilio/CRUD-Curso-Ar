@@ -2,9 +2,11 @@ package com.dbserver.crud_curso.utils;
 
 import java.util.regex.Pattern;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 public class Utils {
-    protected Utils() {
-    }
+    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public static final String REGEX_EMAIL = "^[a-zA-Z0-9._%]+@[a-zA-Z0-9]+\\.[a-zA-Z]{2,}$";
    
@@ -14,4 +16,12 @@ public class Utils {
         return pattern.matcher(conteudo).matches();
     }
 
+
+    public String encriptarSenha(String senha){
+        return this.passwordEncoder.encode(senha);
+    }
+
+    public Boolean validarSenha(String senhaEsperada, String senhaEncriptada){
+        return this.passwordEncoder.matches(senhaEsperada, senhaEncriptada);
+    }
 }

@@ -69,11 +69,14 @@ public abstract class Pessoa implements UserDetails {
     }
 
     public void setSenha(String senha) {
+        Utils utils = new Utils();
+        if(utils.validarSenha(senha, this.senha)) return;
         if (senha == null)
             throw new IllegalArgumentException("Senha deve ser informada");
         if (senha.trim().length() < 8)
             throw new IllegalArgumentException("Senha deve conter 8 caracteres no mínimo");
-        this.senha = senha.trim();
+        
+        this.senha = utils.encriptarSenha(senha);
     }
 
     public void setNome(String nome) {
