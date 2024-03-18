@@ -11,9 +11,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Getter;
 
 @Entity
 @Table(name = "professor_curso")
+@Getter
 public class ProfessorCurso {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,10 +30,10 @@ public class ProfessorCurso {
     private Curso curso;
 
     @Column(nullable = false)
-    private Boolean criador;
+    private boolean criador;
 
     @Column(nullable = false)
-    private Boolean ativo = true;
+    private boolean ativo = true;
 
     public ProfessorCurso(Professor professor, Curso curso, boolean criador) {
         this.curso = curso;
@@ -39,7 +41,7 @@ public class ProfessorCurso {
         this.professor = professor;
     }
 
-    public void setAtivo(Boolean ativo) {
+    public void setAtivo(boolean ativo) {
         this.ativo = ativo;
     }
 }

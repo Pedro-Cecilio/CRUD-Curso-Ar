@@ -32,7 +32,10 @@ public class AlunoCursoService {
         if (verificarSeAlunoEstaCadastradoNoCurso(alunoId, cursoId)) {
             throw new IllegalArgumentException("O aluno já está cadastrado neste curso.");
         }
+        if(!verificarSePossuiGrauEscolarMinimo(aluno, curso)){
+            throw new IllegalArgumentException("O aluno não possui grau escolar mínimo para realização do curso.");
 
+        }
         AlunoCurso novoAlunoCurso = new AlunoCurso(aluno, curso);
         this.alunoCursoRepository.save(novoAlunoCurso);
         return novoAlunoCurso;
@@ -49,11 +52,15 @@ public class AlunoCursoService {
         Page<AlunoCurso> alunoCurso = this.alunoCursoRepository.findAllByCursoId(cursoId, pageable);
         return alunoCurso.toList();
     }
+
     public AlunoCurso buscarAlunoDoCurso(Long alunoId, Long cursoId){
         return this.alunoCursoRepository.findByAlunoIdAndCursoId(alunoId, cursoId).orElseThrow(()-> new NoSuchElementException("Aluno não encontrado"));
     }
 
     public boolean verificarSeAlunoEstaCadastradoNoCurso(Long alunoId, Long cursoId){
         return this.alunoCursoRepository.findByAlunoIdAndCursoId(alunoId, cursoId).isPresent();
+    }
+    public boolean verificarSePossuiGrauEscolarMinimo(Aluno aluno, Curso curso){
+        return aluno.getGrauEscolaridade().getValor() >= curso.getGrauEscolarMinimo().getValor();
     }
 }

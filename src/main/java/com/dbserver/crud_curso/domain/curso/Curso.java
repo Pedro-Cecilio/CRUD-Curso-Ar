@@ -37,7 +37,12 @@ public class Curso {
         setGrauEscolarMinimo(dto.grauEscolarMinimo());
         setGrauAcademicoMinimo(dto.grauAcademicoMinimo());
     }
-
+    public Curso(String titulo, Long duracaoMeses, String grauEscolarMinimo, String grauAcademicoMinimo){
+        setTitulo(titulo);
+        setDuracaoMeses(duracaoMeses);
+        setGrauEscolarMinimo(grauEscolarMinimo);
+        setGrauAcademicoMinimo(grauAcademicoMinimo);
+    }
     protected void atualizarDados(AtualizarDadosCursoDto dto) {
         setTitulo(dto.titulo() != null && !dto.titulo().isEmpty() ? dto.titulo() : this.titulo);
         setDuracaoMeses(dto.duracaoMeses() != null ? dto.duracaoMeses() : this.duracaoMeses);

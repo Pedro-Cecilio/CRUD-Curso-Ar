@@ -4,7 +4,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.List;
 import com.dbserver.crud_curso.domain.curso.Curso;
 import com.dbserver.crud_curso.domain.curso.CursoRepository;
@@ -33,45 +32,67 @@ public class ProfessorCursoService {
                 .orElseThrow(() -> new NoSuchElementException("Professor não encontrado"));
 
         if (this.verificarSeProfessoEstaCadastradoNoCurso(professorId, cursoId)) {
-            throw new IllegalArgumentException("O Professor já está cadastrado neste curso.");
+            ProfessorCurso professorCurso = this.professorCursoRepository
+                    .findByProfessorIdAndCursoId(professorId, cursoId).get();
+            if (professorCurso.isAtivo()) {
+                throw new IllegalArgumentException("O Professor já está cadastrado neste curso.");
+            }
+            professorCurso.setAtivo(true);
+            this.professorCursoRepository.save(professorCurso);
+            return professorCurso;
+        }
+        if (professor.getGrauAcademico().getValor() < curso.getGrauAcademicoMinimo().getValor()) {
+            throw new IllegalArgumentException("O professor não possui grau acadêmico mínimo para lecionar no curso.");
+
         }
 
-        Optional<ProfessorCurso> professorCursoAtivoFalse = this.professorCursoRepository
-                .findByProfessorIdAndCursoIdAndAtivoFalse(professorId, cursoId);
-        if (professorCursoAtivoFalse.isPresent()) {
-            professorCursoAtivoFalse.get().setAtivo(true);
-            this.professorCursoRepository.save(professorCursoAtivoFalse.get());
-            return professorCursoAtivoFalse.get();
-        }
         ProfessorCurso novoProfessorCurso = new ProfessorCurso(professor, curso, false);
         this.professorCursoRepository.save(novoProfessorCurso);
         return novoProfessorCurso;
     }
 
-    public void removerProfessorDoCurso(Long professorId, Long cursoId) {
-        if (this.verificarSeProfessoEstaCadastradoNoCurso(professorId, cursoId)) {
+    public ProfessorCurso atualizarStatusAtivoProfessor(Long professorId, Long cursoId, boolean ativo) {
+
+        if (!this.verificarSeProfessoEstaCadastradoNoCurso(professorId, cursoId)) {
             throw new NoSuchElementException("Professor não está cadastrado no curso");
         }
-        ProfessorCurso professorCurso = this.professorCursoRepository.findById(cursoId).get();
+        ProfessorCurso professorCurso = this.professorCursoRepository
+                .findByProfessorIdAndCursoId(professorId, cursoId).get();
+        if (ativo == professorCurso.isAtivo()) return professorCurso;
+        professorCurso.setAtivo(ativo);
+        this.professorCursoRepository.save(professorCurso);
+        return professorCurso;
+
+    }
+
+    public void removerProfessorDoCurso(Long professorId, Long cursoId) {
+        if (!this.verificarSeProfessorEstaAtivoNoCurso(professorId, cursoId)) {
+            throw new NoSuchElementException("Professor não está cadastrado/ativo no curso");
+        }
+        ProfessorCurso professorCurso = this.professorCursoRepository.findByProfessorIdAndCursoId(professorId, cursoId)
+                .get();
         professorCurso.setAtivo(false);
         this.professorCursoRepository.save(professorCurso);
     }
 
     public List<ProfessorCurso> listarTodosProfessoresAtivosDoCurso(Long cursoId, Pageable pageable) {
-        Page<ProfessorCurso> pageProfessorCurso = this.professorCursoRepository.findAllByCursoIdAndAtivoTrue(cursoId, pageable);
+        Page<ProfessorCurso> pageProfessorCurso = this.professorCursoRepository.findAllByCursoIdAndAtivoTrue(cursoId,
+                pageable);
         return pageProfessorCurso.toList();
     }
 
     public ProfessorCurso pegarProfessorDoCurso(Long professorId, Long cursoId) {
-        ProfessorCurso pageProfessorCurso = this.professorCursoRepository
+        return this.professorCursoRepository
                 .findByProfessorIdAndCursoIdAndAtivoTrue(professorId, cursoId)
                 .orElseThrow(() -> new NoSuchElementException("Professor não está cadastrado no curso"));
-        return pageProfessorCurso;
     }
 
     public boolean verificarSeProfessoEstaCadastradoNoCurso(Long professorId, Long cursoId) {
+        return this.professorCursoRepository.findByProfessorIdAndCursoId(professorId,
+                cursoId).isPresent();
+    }
+    public boolean verificarSeProfessorEstaAtivoNoCurso(Long professorId, Long cursoId) {
         return this.professorCursoRepository.findByProfessorIdAndCursoIdAndAtivoTrue(professorId,
                 cursoId).isPresent();
-
     }
 }

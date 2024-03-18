@@ -21,7 +21,7 @@ public class Utils {
         return this.passwordEncoder.encode(senha);
     }
 
-    public Boolean validarSenha(String senhaEsperada, String senhaEncriptada){
+    public boolean validarSenha(String senhaEsperada, String senhaEncriptada){
         return this.passwordEncoder.matches(senhaEsperada, senhaEncriptada);
     }
 }
