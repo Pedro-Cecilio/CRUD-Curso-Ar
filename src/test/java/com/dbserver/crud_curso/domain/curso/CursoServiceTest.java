@@ -32,7 +32,7 @@ import com.dbserver.crud_curso.domain.professorCurso.ProfessorCursoRepository;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
-public class CursoServiceTest {
+class CursoServiceTest {
     @InjectMocks
     private CursoService cursoService;
 
