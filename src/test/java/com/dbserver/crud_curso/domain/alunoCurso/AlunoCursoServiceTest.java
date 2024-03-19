@@ -108,6 +108,7 @@ class AlunoCursoServiceTest {
 
         assertThrows(NoSuchElementException.class, () -> this.alunoCursoService.cadastrarAlunoNoCurso(1L, 1L));
     }
+
     @Test
     @DisplayName("Não deve ser possível cadastrar um aluno inexistente em um curso")
     void givenTenhoUmAlunoIdInexistenteEUmCursoIdExistenteWhenCadastroAlunoNoCursoThenRetornarUmErro() {
@@ -116,6 +117,7 @@ class AlunoCursoServiceTest {
 
         assertThrows(NoSuchElementException.class, () -> this.alunoCursoService.cadastrarAlunoNoCurso(1L, 1L));
     }
+
     @Test
     @DisplayName("Não deve ser possível cadastrar um aluno já cadastrado no curso")
     void givenTenhoUmAlunoJaCadastradoNoCursoWhenCadastroAlunoNoCursoThenRetornarUmErro() {
@@ -125,6 +127,7 @@ class AlunoCursoServiceTest {
 
         assertThrows(IllegalArgumentException.class, () -> this.alunoCursoService.cadastrarAlunoNoCurso(1L, 1L));
     }
+
     @Test
     @DisplayName("Não deve ser possível cadastrar um aluno que não possua grau escolar mínimo suficiente")
     void givenTenhoUmAlunoComGrauEscolarInferiorNoCursoWhenCadastroAlunoNoCursoThenRetornarUmErro() {
@@ -139,52 +142,65 @@ class AlunoCursoServiceTest {
         return Stream.of(
                 Arguments.of("ATIVO"),
                 Arguments.of("INATIVO"),
-                Arguments.of("FORMADO"));     
+                Arguments.of("FORMADO"));
     }
+
     @ParameterizedTest
     @MethodSource("argumentosDadosValidosAtualizarMatricula")
     @DisplayName("Deve ser possível atualizar status matricula corretamente")
-    void givenAlunoEstaCadastradoNoCursoWhenAtualizoStatusMatriculaCorretamenteThenRetornarAlunoCursoAtualizado(String statusMatricula){
-        when(this.alunoCursoRepository.findByAlunoIdAndCursoId(1L, 1L)).thenReturn(Optional.of(this.alunoCursoMock));
+    void givenAlunoEstaCadastradoNoCursoWhenAtualizoStatusMatriculaCorretamenteThenRetornarAlunoCursoAtualizado(
+            String statusMatricula) {
+        when(this.alunoCursoRepository.findByAlunoIdAndCursoIdAndDesativadaFalse(1L, 1L))
+                .thenReturn(Optional.of(this.alunoCursoMock));
         AlunoCurso alunoCurso = this.alunoCursoService.atualizarStatusMatricula(1L, 1L, statusMatricula);
         assertEquals(statusMatricula, alunoCurso.getStatusMatricula().toString());
     }
+
     private static Stream<Arguments> argumentosDadosInalidosAtualizarMatricula() {
         return Stream.of(
                 Arguments.of("ABERTO"),
                 Arguments.of("FECHADO"),
-                Arguments.of("EXPULSO"));  
+                Arguments.of("EXPULSO"));
     }
+
     @ParameterizedTest
     @MethodSource("argumentosDadosInalidosAtualizarMatricula")
     @DisplayName("Deve falhar ao atualizar status matricula com dados inválidos")
-    void givenAlunoEstaCadastradoNoCursoWhenAtualizoStatusMatriculaComDadosinválidosThenRetornarLancarUmErro(String statusMatricula){
-        when(this.alunoCursoRepository.findByAlunoIdAndCursoId(1L, 1L)).thenReturn(Optional.of(this.alunoCursoMock));
-        assertThrows(IllegalArgumentException.class, () -> this.alunoCursoService.atualizarStatusMatricula(1L, 1L, statusMatricula));
+    void givenAlunoEstaCadastradoNoCursoWhenAtualizoStatusMatriculaComDadosinválidosThenRetornarLancarUmErro(
+            String statusMatricula) {
+        when(this.alunoCursoRepository.findByAlunoIdAndCursoIdAndDesativadaFalse(1L, 1L))
+                .thenReturn(Optional.of(this.alunoCursoMock));
+        assertThrows(IllegalArgumentException.class,
+                () -> this.alunoCursoService.atualizarStatusMatricula(1L, 1L, statusMatricula));
     }
 
     @Test
     @DisplayName("Deve ser possível listar todos alunos do curso")
-    void givenPossuoUmCursoIdWhenListoTodosAlunosDoCursoThenRetornarListaComAlunosDoCurso(){
+    void givenPossuoUmCursoIdWhenListoTodosAlunosDoCursoThenRetornarListaComAlunosDoCurso() {
         List<AlunoCurso> listaDeAlunos = List.of(this.alunoCursoMock, alunoCursoMock);
-        when(this.alunoCursoRepository.findAllByCursoId(1L, this.pageable)).thenReturn(new PageImpl<>(listaDeAlunos));
+        when(this.alunoCursoRepository.findAllByCursoIdAndDesativadaFalse(1L, this.pageable))
+                .thenReturn(new PageImpl<>(listaDeAlunos));
         List<AlunoCurso> alunos = this.alunoCursoService.listarTodosAlunosDoCurso(1L, pageable);
 
         assertEquals(listaDeAlunos.size(), alunos.size());
     }
+
     @Test
     @DisplayName("Deve ser retonar lista vazia quando não houver nenhum aluno no curso")
-    void givenPossuoUmCursoIdDeUmCursoSemALunosWhenListoTodosAlunosDoCursoThenRetornarListaVazia(){
+    void givenPossuoUmCursoIdDeUmCursoSemALunosWhenListoTodosAlunosDoCursoThenRetornarListaVazia() {
         List<AlunoCurso> listaDeAlunos = List.of();
-        when(this.alunoCursoRepository.findAllByCursoId(1L, this.pageable)).thenReturn(new PageImpl<>(listaDeAlunos));
+        when(this.alunoCursoRepository.findAllByCursoIdAndDesativadaFalse(1L, this.pageable))
+                .thenReturn(new PageImpl<>(listaDeAlunos));
         List<AlunoCurso> alunos = this.alunoCursoService.listarTodosAlunosDoCurso(1L, pageable);
 
         assertEquals(listaDeAlunos.size(), alunos.size());
     }
+
     @Test
     @DisplayName("Deve ser possivel buscar um aluno do curso")
-    void givenPossuoUmCursoIdEAlunoIdWhenBuscoPeloAlunoDoCursoThenRetornarAlunoDoCurso(){
-        when(this.alunoCursoRepository.findByAlunoIdAndCursoId(1L, 1L)).thenReturn(Optional.of(this.alunoCursoMock));
+    void givenPossuoUmCursoIdEAlunoIdWhenBuscoPeloAlunoDoCursoThenRetornarAlunoDoCurso() {
+        when(this.alunoCursoRepository.findByAlunoIdAndCursoIdAndDesativadaFalse(1L, 1L))
+                .thenReturn(Optional.of(this.alunoCursoMock));
         AlunoCurso alunoCurso = this.alunoCursoService.buscarAlunoDoCurso(1L, 1L);
 
         assertEquals(this.alunoMock.getEmail(), alunoCurso.getAluno().getEmail());
@@ -195,24 +211,26 @@ class AlunoCursoServiceTest {
         assertEquals(this.alunoMock.getGrauEscolaridade().toString(),
                 alunoCurso.getAluno().getGrauEscolaridade().toString());
     }
+
     @Test
     @DisplayName("Deve falhar ao buscar aluno que não está cadastrado no curso")
-    void givenPossuoUmCursoIdEAlunoIdInexisteteNocursoWhenBuscoPeloAlunoDoCursoThenlancarUmErro(){
-        when(this.alunoCursoRepository.findByAlunoIdAndCursoId(1L, 1L)).thenReturn(Optional.empty());
-        assertThrows(NoSuchElementException.class, ()->this.alunoCursoService.buscarAlunoDoCurso(1L, 1L));
+    void givenPossuoUmCursoIdEAlunoIdInexisteteNocursoWhenBuscoPeloAlunoDoCursoThenlancarUmErro() {
+        when(this.alunoCursoRepository.findByAlunoIdAndCursoIdAndDesativadaFalse(1L, 1L)).thenReturn(Optional.empty());
+        assertThrows(NoSuchElementException.class, () -> this.alunoCursoService.buscarAlunoDoCurso(1L, 1L));
     }
 
     @Test
     @DisplayName("Deve retornar true ao encontrar aluno no curso")
-    void givenPossuoUmCursoIdEAlunoIdExistentesWhenVerificoSeAlunoEstaNoCursoThenRetornarTrue(){
+    void givenPossuoUmCursoIdEAlunoIdExistentesWhenVerificoSeAlunoEstaNoCursoThenRetornarTrue() {
         when(this.alunoCursoRepository.findByAlunoIdAndCursoId(1L, 1L)).thenReturn(Optional.of(this.alunoCursoMock));
-        assertTrue(this.alunoCursoService.verificarSeAlunoEstaCadastradoNoCurso(1L, 1L));
+        assertTrue(this.alunoCursoService.verificarSeAlunoPossuiCadastroNoCurso(1L, 1L));
     }
+
     @Test
     @DisplayName("Deve retornar false ao não encontrar aluno no curso")
-    void givenPossuoUmCursoIdEAlunoIdInexistentesWhenVerificoSeAlunoEstaNoCursoThenRetornarFalse(){
+    void givenPossuoUmCursoIdEAlunoIdInexistentesWhenVerificoSeAlunoEstaNoCursoThenRetornarFalse() {
         when(this.alunoCursoRepository.findByAlunoIdAndCursoId(1L, 1L)).thenReturn(Optional.empty());
-        assertFalse(this.alunoCursoService.verificarSeAlunoEstaCadastradoNoCurso(1L, 1L));
+        assertFalse(this.alunoCursoService.verificarSeAlunoPossuiCadastroNoCurso(1L, 1L));
     }
-    
+
 }

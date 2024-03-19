@@ -25,14 +25,16 @@ public class AlunoCursoService {
     }
 
     public AlunoCurso cadastrarAlunoNoCurso(Long alunoId, Long cursoId) {
-        Curso curso = this.cursoRepository.findById(cursoId).orElseThrow(()-> new NoSuchElementException("Curso não encontrado"));
-    
-        Aluno aluno = this.alunoRepository.findById(alunoId).orElseThrow(()-> new NoSuchElementException("Aluno não encontrado"));
-        
-        if (verificarSeAlunoEstaCadastradoNoCurso(alunoId, cursoId)) {
+        Curso curso = this.cursoRepository.findById(cursoId)
+                .orElseThrow(() -> new NoSuchElementException("Curso não encontrado"));
+
+        Aluno aluno = this.alunoRepository.findById(alunoId)
+                .orElseThrow(() -> new NoSuchElementException("Aluno não encontrado"));
+
+        if (verificarSeAlunoPossuiCadastroNoCurso(alunoId, cursoId)) {
             throw new IllegalArgumentException("O aluno já está cadastrado neste curso.");
         }
-        if(!verificarSePossuiGrauEscolarMinimo(aluno, curso)){
+        if (!verificarSePossuiGrauEscolarMinimo(aluno, curso)) {
             throw new IllegalArgumentException("O aluno não possui grau escolar mínimo para realização do curso.");
 
         }
@@ -42,25 +44,28 @@ public class AlunoCursoService {
     }
 
     public AlunoCurso atualizarStatusMatricula(Long alunoId, Long cursoId, String statusMatricula) {
-        AlunoCurso alunoCurso = this.alunoCursoRepository.findByAlunoIdAndCursoId(alunoId, cursoId).orElseThrow(()->new NoSuchElementException("O aluno informado não está cadastrado no curso"));
+        AlunoCurso alunoCurso = this.alunoCursoRepository.findByAlunoIdAndCursoIdAndDesativadaFalse(alunoId, cursoId)
+                .orElseThrow(() -> new NoSuchElementException("O aluno informado não está cadastrado no curso"));
         alunoCurso.setStatusMatricula(statusMatricula);
         this.alunoCursoRepository.save(alunoCurso);
         return alunoCurso;
     }
 
-    public List<AlunoCurso> listarTodosAlunosDoCurso(Long cursoId, Pageable pageable){
-        Page<AlunoCurso> alunoCurso = this.alunoCursoRepository.findAllByCursoId(cursoId, pageable);
+    public List<AlunoCurso> listarTodosAlunosDoCurso(Long cursoId, Pageable pageable) {
+        Page<AlunoCurso> alunoCurso = this.alunoCursoRepository.findAllByCursoIdAndDesativadaFalse(cursoId, pageable);
         return alunoCurso.toList();
     }
 
-    public AlunoCurso buscarAlunoDoCurso(Long alunoId, Long cursoId){
-        return this.alunoCursoRepository.findByAlunoIdAndCursoId(alunoId, cursoId).orElseThrow(()-> new NoSuchElementException("Aluno não encontrado"));
+    public AlunoCurso buscarAlunoDoCurso(Long alunoId, Long cursoId) {
+        return this.alunoCursoRepository.findByAlunoIdAndCursoIdAndDesativadaFalse(alunoId, cursoId)
+                .orElseThrow(() -> new NoSuchElementException("Aluno não encontrado"));
     }
 
-    public boolean verificarSeAlunoEstaCadastradoNoCurso(Long alunoId, Long cursoId){
+    public boolean verificarSeAlunoPossuiCadastroNoCurso(Long alunoId, Long cursoId) {
         return this.alunoCursoRepository.findByAlunoIdAndCursoId(alunoId, cursoId).isPresent();
     }
-    public boolean verificarSePossuiGrauEscolarMinimo(Aluno aluno, Curso curso){
+
+    public boolean verificarSePossuiGrauEscolarMinimo(Aluno aluno, Curso curso) {
         return aluno.getGrauEscolaridade().getValor() >= curso.getGrauEscolarMinimo().getValor();
     }
 }
