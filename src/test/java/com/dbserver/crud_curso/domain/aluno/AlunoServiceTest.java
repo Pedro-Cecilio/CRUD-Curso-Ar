@@ -133,7 +133,7 @@ class AlunoServiceTest {
     @Test
     @DisplayName("Deve ser possível atualizar os dados de um aluno")
     void givenTenhoUmAtualizarDadosAlunoDtoWhenExecutoMetodoParaAtualizarThenAtualizarDados() {
-        when(this.alunoRepository.findById(1L)).thenReturn(Optional.of(this.alunoMock));
+        when(this.alunoRepository.findByIdAndDesativadaFalse(1L)).thenReturn(Optional.of(this.alunoMock));
 
         Aluno aluno = this.alunoService.atualizarAluno(atualizarDadosAlunoDtoTodosDados, 1L);
 
@@ -147,7 +147,7 @@ class AlunoServiceTest {
     @Test
     @DisplayName("Deve ser possível atualizar somente um dado de um aluno")
     void givenTenhoUmAtualizarDadosAlunoDtoComApenasUmDadoWhenExecutoMetodoParaAtualizarThenAtualizarDados() {
-        when(this.alunoRepository.findById(1L)).thenReturn(Optional.of(this.alunoMock));
+        when(this.alunoRepository.findByIdAndDesativadaFalse(1L)).thenReturn(Optional.of(this.alunoMock));
 
         Aluno aluno = this.alunoService.atualizarAluno(atualizarDadosAlunoDtoUmDado, 1L);
 
@@ -161,7 +161,7 @@ class AlunoServiceTest {
     @Test
     @DisplayName("Deve falhar ao tentar atualizar um aluno inexistete")
     void givenTenhoUmAtualizarDadosAlunoDtoEAlunoIdInexistenteWhenExecutoMetodoParaAtualizarThenLancarErro() {
-        when(this.alunoRepository.findById(1L)).thenReturn(Optional.empty());
+        when(this.alunoRepository.findByIdAndDesativadaFalse(1L)).thenReturn(Optional.empty());
 
         assertThrows(NoSuchElementException.class, () -> this.alunoService.atualizarAluno(atualizarDadosAlunoDtoTodosDados, 1L));
     }
@@ -180,7 +180,7 @@ class AlunoServiceTest {
     @DisplayName("Deve falhar ao tentar atualizar um aluno com dados incorretos")
     void givenTenhoUmAtualizarDadosAlunoDtoComDadosInvalidosWhenExecutoAtualizarAlunoThenLancarUmErro(String senha,
             String nome, String sobrenome, Long idade, String grauEscolaridade) {
-        when(this.alunoRepository.findById(1L)).thenReturn(Optional.of(this.alunoMock));
+        when(this.alunoRepository.findByIdAndDesativadaFalse(1L)).thenReturn(Optional.of(this.alunoMock));
         AtualizarDadosAlunoDto AtualizarDadosAlunoDto2 = new AtualizarDadosAlunoDto(senha, nome, sobrenome, idade,
                 grauEscolaridade);
 
@@ -191,17 +191,17 @@ class AlunoServiceTest {
     @Test
     @DisplayName("Deve ser possível deletar um aluno")
     void givenTenhoUmAlunoIdWhenExecutoMetodoParaDeletarAlunoThenDeletaAluno() {
-        when(this.alunoRepository.findById(1L)).thenReturn(Optional.of(this.alunoMock));
+        when(this.alunoRepository.findByIdAndDesativadaFalse(1L)).thenReturn(Optional.of(this.alunoMock));
 
-        this.alunoService.deletarAluno(1L);
+        Aluno resposta = this.alunoService.deletarAluno(1L);
 
-        verify(this.alunoRepository).delete(this.alunoMock);
+        assertTrue(resposta.isDesativada());
     }
 
     @Test
     @DisplayName("Não deve ser possível deletar um aluno inexistente")
     void givenTenhoUmAlunoIdQueNaoExisteWhenExecutoMetodoParaDeletarAlunoThenLancarUmErro() {
-        when(this.alunoRepository.findById(1L)).thenReturn(Optional.empty());
+        when(this.alunoRepository.findByIdAndDesativadaFalse(1L)).thenReturn(Optional.empty());
 
         assertThrows(NoSuchElementException.class, () -> this.alunoService.deletarAluno(1L));
     }
@@ -210,7 +210,7 @@ class AlunoServiceTest {
     @DisplayName("Deve ser possível listar todos alunos")
     void givenPossuoAlunosCadastradosWhenExecutoMetodoParaListarTodosAlunosThenRetornarListaDeAlunos() {
         List<Aluno> listaDeAlunos = List.of(this.alunoMock, this.alunoMock);
-        when(this.alunoRepository.findAll(pageable)).thenReturn(new PageImpl<>(listaDeAlunos));
+        when(this.alunoRepository.findAllByDesativadaFalse(pageable)).thenReturn(new PageImpl<>(listaDeAlunos));
 
         List<AlunoRespostaDto> resposta = this.alunoService.listarTodosAlunos(pageable);
 
@@ -221,7 +221,7 @@ class AlunoServiceTest {
     @DisplayName("Deve retornar uma lista vazia quando não houver alunos cadastrados, ao listar todos alunos")
     void givenNaoPossuoAlunosCadastradosWhenExecutoMetodoParaListarTodosAlunosThenRetornarListaVazia() {
         List<Aluno> listaDeAlunos = List.of();
-        when(this.alunoRepository.findAll(pageable)).thenReturn(new PageImpl<>(listaDeAlunos));
+        when(this.alunoRepository.findAllByDesativadaFalse(pageable)).thenReturn(new PageImpl<>(listaDeAlunos));
 
         List<AlunoRespostaDto> resposta = this.alunoService.listarTodosAlunos(pageable);
 
@@ -231,7 +231,7 @@ class AlunoServiceTest {
     @Test
     @DisplayName("Deve ser possivel buscar aluno pelo id")
     void givenPossuoAlunoIdWhenExecutoMetodoParaPegarAlunoThenRetornarAluno() {
-        when(this.alunoRepository.findById(1L)).thenReturn(Optional.of(this.alunoMock));
+        when(this.alunoRepository.findByIdAndDesativadaFalse(1L)).thenReturn(Optional.of(this.alunoMock));
 
         AlunoRespostaDto resposta = this.alunoService.pegarAluno(1L);
 
@@ -244,7 +244,7 @@ class AlunoServiceTest {
     @Test
     @DisplayName("Deve lançar um erro ao buscar pelo id um aluno que não existe")
     void givenPossuoAlunoIdInexistenteWhenExecutoMetodoParaPegarAlunoThenLancarUmErro() {
-        when(this.alunoRepository.findById(1L)).thenReturn(Optional.empty());
+        when(this.alunoRepository.findByIdAndDesativadaFalse(1L)).thenReturn(Optional.empty());
 
         assertThrows(NoSuchElementException.class, () -> this.alunoService.pegarAluno(1L));
     }
@@ -266,6 +266,22 @@ class AlunoServiceTest {
         assertTrue(this.alunoService.verificarSeEmailExiste(anyString()));
     }
 
+    @Test
+    @DisplayName("Deve ser possível reativar a conta de um aluno")
+    void givenTenhoUmAlunoIdDeUmaContaAlunoDesativadaWhenExecutoReativarContaThenReativarConta() {
+        this.alunoMock.setDesativada(true);
+        when(this.alunoRepository.findByIdAndDesativadaTrue(1L)).thenReturn(Optional.of(this.alunoMock));
 
+        Aluno resposta = this.alunoService.reativarContaAluno(1L);
+
+        assertFalse(resposta.isDesativada());
+    }
+    @Test
+    @DisplayName("Não deve ser possível reativar a conta de um aluno inexistente")
+    void givenTenhoUmAlunoIdDeUmaContaAlunoAtivadaOuInexistenteWhenExecutoReativarContaThenLancarErro() {
+        when(this.alunoRepository.findByIdAndDesativadaTrue(1L)).thenReturn(Optional.empty());
+
+        assertThrows(NoSuchElementException.class, () -> this.alunoService.reativarContaAluno(1L));
+    }
 
 }

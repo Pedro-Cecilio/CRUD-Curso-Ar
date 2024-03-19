@@ -2,8 +2,12 @@ package com.dbserver.crud_curso.utils;
 
 import java.util.regex.Pattern;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.dbserver.crud_curso.domain.pessoa.Pessoa;
 
 public class Utils {
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -23,5 +27,11 @@ public class Utils {
 
     public boolean validarSenha(String senhaEsperada, String senhaEncriptada){
         return this.passwordEncoder.matches(senhaEsperada, senhaEncriptada);
+    }
+
+    public Long pegarIdDaPessoaLogada() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Pessoa pessoaLogada = (Pessoa) authentication.getPrincipal();
+        return pessoaLogada.getId();
     }
 }

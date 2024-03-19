@@ -15,6 +15,7 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.Setter;
 
 @MappedSuperclass
 @Getter
@@ -39,6 +40,12 @@ public abstract class Pessoa implements UserDetails {
 
     @Column(nullable = false)
     private Long idade;
+
+    @Setter
+    @Column(nullable = false)
+    private boolean desativada = false;
+
+
 
     @Transient
     private List<SimpleGrantedAuthority> autoridades = new ArrayList<>();

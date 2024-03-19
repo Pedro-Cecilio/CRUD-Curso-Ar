@@ -34,24 +34,26 @@ public class AlunoService {
     }
 
     public Aluno atualizarAluno(AtualizarDadosAlunoDto novosDados, Long alunoId) {
-        Aluno aluno = this.alunoRepository.findById(alunoId).orElseThrow(()->new NoSuchElementException("Aluno não encontrado."));
+        Aluno aluno = this.alunoRepository.findByIdAndDesativadaFalse(alunoId).orElseThrow(()->new NoSuchElementException("Aluno não encontrado."));
         aluno.atualizarDadosAluno(novosDados);
         this.alunoRepository.save(aluno);
         return aluno;
     }
 
-    public void deletarAluno(Long alunoId) {
-        Aluno aluno = this.alunoRepository.findById(alunoId).orElseThrow(()->new NoSuchElementException("Aluno não encontrado."));
-        this.alunoRepository.delete(aluno);
+    public Aluno deletarAluno(Long alunoId) {
+        Aluno aluno = this.alunoRepository.findByIdAndDesativadaFalse(alunoId).orElseThrow(()->new NoSuchElementException("Aluno não encontrado."));
+        aluno.setDesativada(true);
+        this.alunoRepository.save(aluno);
+        return aluno;
     }
 
     public List<AlunoRespostaDto> listarTodosAlunos(Pageable pageable) {
-        Page<Aluno> pessoas = this.alunoRepository.findAll(pageable);
+        Page<Aluno> pessoas = this.alunoRepository.findAllByDesativadaFalse(pageable);
         return pessoas.stream().map(AlunoRespostaDto::new).toList();
     }
 
     public AlunoRespostaDto pegarAluno(Long alunoId) {
-        Aluno aluno = this.alunoRepository.findById(alunoId).orElseThrow(()->new NoSuchElementException("Aluno não encontrado."));
+        Aluno aluno = this.alunoRepository.findByIdAndDesativadaFalse(alunoId).orElseThrow(()->new NoSuchElementException("Aluno não encontrado."));
 
         return new AlunoRespostaDto(aluno);
     }
@@ -65,4 +67,10 @@ public class AlunoService {
         return false;
     }
 
+    public Aluno reativarContaAluno(long alunoId){
+        Aluno aluno = this.alunoRepository.findByIdAndDesativadaTrue(alunoId).orElseThrow(()->new NoSuchElementException("Aluno não encontrado ou não possui conta ativa."));
+        aluno.setDesativada(false);
+        this.alunoRepository.save(aluno);
+        return aluno;
+    }
 }
