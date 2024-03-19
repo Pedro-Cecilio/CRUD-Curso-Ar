@@ -28,7 +28,7 @@ public class AlunoCursoService {
         Curso curso = this.cursoRepository.findById(cursoId)
                 .orElseThrow(() -> new NoSuchElementException("Curso não encontrado"));
 
-        Aluno aluno = this.alunoRepository.findById(alunoId)
+        Aluno aluno = this.alunoRepository.findByIdAndDesativadaFalse(alunoId)
                 .orElseThrow(() -> new NoSuchElementException("Aluno não encontrado"));
 
         if (verificarSeAlunoPossuiCadastroNoCurso(alunoId, cursoId)) {
@@ -44,7 +44,7 @@ public class AlunoCursoService {
     }
 
     public AlunoCurso atualizarStatusMatricula(Long alunoId, Long cursoId, String statusMatricula) {
-        AlunoCurso alunoCurso = this.alunoCursoRepository.findByAlunoIdAndCursoIdAndDesativadaFalse(alunoId, cursoId)
+        AlunoCurso alunoCurso = this.alunoCursoRepository.findByAlunoIdAndCursoId(alunoId, cursoId)
                 .orElseThrow(() -> new NoSuchElementException("O aluno informado não está cadastrado no curso"));
         alunoCurso.setStatusMatricula(statusMatricula);
         this.alunoCursoRepository.save(alunoCurso);
@@ -52,12 +52,12 @@ public class AlunoCursoService {
     }
 
     public List<AlunoCurso> listarTodosAlunosDoCurso(Long cursoId, Pageable pageable) {
-        Page<AlunoCurso> alunoCurso = this.alunoCursoRepository.findAllByCursoIdAndDesativadaFalse(cursoId, pageable);
+        Page<AlunoCurso> alunoCurso = this.alunoCursoRepository.findAllByCursoId(cursoId, pageable);
         return alunoCurso.toList();
     }
 
     public AlunoCurso buscarAlunoDoCurso(Long alunoId, Long cursoId) {
-        return this.alunoCursoRepository.findByAlunoIdAndCursoIdAndDesativadaFalse(alunoId, cursoId)
+        return this.alunoCursoRepository.findByAlunoIdAndCursoId(alunoId, cursoId)
                 .orElseThrow(() -> new NoSuchElementException("Aluno não encontrado"));
     }
 

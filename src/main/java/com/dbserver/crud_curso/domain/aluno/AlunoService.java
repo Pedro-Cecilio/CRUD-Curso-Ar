@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import com.dbserver.crud_curso.domain.aluno.dto.AlunoRespostaDto;
 import com.dbserver.crud_curso.domain.aluno.dto.AtualizarDadosAlunoDto;
 import com.dbserver.crud_curso.domain.aluno.dto.CriarAlunoDto;
-import com.dbserver.crud_curso.domain.alunoCurso.AlunoCurso;
 import com.dbserver.crud_curso.domain.alunoCurso.AlunoCursoRepository;
+import com.dbserver.crud_curso.domain.enums.StatusMatricula;
 import com.dbserver.crud_curso.domain.professor.Professor;
 import com.dbserver.crud_curso.domain.professor.ProfessorRepository;
 
@@ -48,11 +48,12 @@ public class AlunoService {
     public Aluno deletarAluno(Long alunoId) {
         Aluno aluno = this.alunoRepository.findByIdAndDesativadaFalse(alunoId).orElseThrow(()->new NoSuchElementException("Aluno não encontrado."));
         aluno.setDesativada(true);
-        List<AlunoCurso> cursosQueOAlunoPertence = this.alunoCursoRepository.findAllByAlunoId(alunoId);
-        if(!cursosQueOAlunoPertence.isEmpty()){
-            cursosQueOAlunoPertence.forEach(alunoCurso -> alunoCurso.setDesativada(true));
-            this.alunoCursoRepository.saveAll(cursosQueOAlunoPertence);
-        }
+        this.alunoCursoRepository.findAllByAlunoId(alunoId).stream().forEach(alunoCurso -> {
+            if(StatusMatricula.ATIVO.equals(alunoCurso.getStatusMatricula())){
+                alunoCurso.setStatusMatricula(StatusMatricula.INATIVO.toString());
+                this.alunoCursoRepository.save(alunoCurso);
+            }
+        });
         this.alunoRepository.save(aluno);
         return aluno;
     }
@@ -71,21 +72,13 @@ public class AlunoService {
     public boolean verificarSeEmailExiste(String email) {
         Optional<Professor> professor = professorRepository.findByEmail(email);
         Optional<Aluno> alunoExistente = alunoRepository.findByEmail(email);
-        if (professor.isPresent() || alunoExistente.isPresent()) {
-            return true;
-        }
-        return false;
+        return (professor.isPresent() || alunoExistente.isPresent());
     }
 
     public Aluno reativarContaAluno(long alunoId){
         Aluno aluno = this.alunoRepository.findByIdAndDesativadaTrue(alunoId).orElseThrow(()->new NoSuchElementException("Aluno não encontrado ou não possui conta ativa."));
         aluno.setDesativada(false);
         this.alunoRepository.save(aluno);
-        List<AlunoCurso> cursosQueOAlunoPertence = this.alunoCursoRepository.findAllByAlunoId(alunoId);
-        if(!cursosQueOAlunoPertence.isEmpty()){
-            cursosQueOAlunoPertence.forEach(alunoCurso -> alunoCurso.setDesativada(false));
-            this.alunoCursoRepository.saveAll(cursosQueOAlunoPertence);
-        }
         return aluno;
     }
 }

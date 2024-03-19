@@ -4,6 +4,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.dbserver.crud_curso.domain.enums.StatusMatricula;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -14,8 +16,5 @@ public interface AlunoCursoRepository extends JpaRepository<AlunoCurso, Long>{
 
     List<AlunoCurso> findAllByAlunoId(Long alunoId);
 
-    Optional<AlunoCurso> findByAlunoIdAndCursoIdAndDesativadaFalse(Long alunoId, Long cursoId);
-    Optional<AlunoCurso> findByAlunoIdAndCursoIdAndDesativadaTrue(Long alunoId, Long cursoId);
-
-    Page<AlunoCurso> findAllByCursoIdAndDesativadaFalse(Long cursoId, Pageable pageable);
+    List<AlunoCurso> findAllByCursoIdAndStatusMatricula(Long id, StatusMatricula statusMatricula, Pageable pageable);
 }

@@ -4,6 +4,7 @@ import com.dbserver.crud_curso.domain.aluno.Aluno;
 import com.dbserver.crud_curso.domain.curso.Curso;
 import com.dbserver.crud_curso.domain.enums.StatusMatricula;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,7 +14,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
-import lombok.Setter;
 
 @Entity
 @Table(name = "aluno_curso")
@@ -23,20 +23,16 @@ public class AlunoCurso {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "aluno_id", nullable = false)
     private Aluno aluno;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "curso_id", nullable = false)
     private Curso curso;
     
     @Column(nullable = false)
     private StatusMatricula statusMatricula;
-
-    @Setter
-    @Column(nullable = false)
-    private boolean desativada = false;
 
     public AlunoCurso(Aluno aluno, Curso curso){
         this.aluno = aluno;

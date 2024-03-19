@@ -32,6 +32,7 @@ import com.dbserver.crud_curso.domain.aluno.dto.AtualizarDadosAlunoDto;
 import com.dbserver.crud_curso.domain.aluno.dto.CriarAlunoDto;
 import com.dbserver.crud_curso.domain.alunoCurso.AlunoCurso;
 import com.dbserver.crud_curso.domain.alunoCurso.AlunoCursoRepository;
+import com.dbserver.crud_curso.domain.curso.Curso;
 import com.dbserver.crud_curso.domain.professor.ProfessorRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -61,6 +62,9 @@ class AlunoServiceTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
     
+    @Mock 
+    private Curso cursoMock;
+    
     private CriarAlunoDto criarAlunoDto;
     private AtualizarDadosAlunoDto atualizarDadosAlunoDtoTodosDados;
     private AtualizarDadosAlunoDto atualizarDadosAlunoDtoUmDado;
@@ -89,6 +93,7 @@ class AlunoServiceTest {
                 null,
                 null);
         this.alunoMock = new Aluno(criarAlunoDto);
+        this.alunoCursoMock = new AlunoCurso(alunoMock, cursoMock);
     }
 
     @Test
@@ -205,7 +210,7 @@ class AlunoServiceTest {
 
         Aluno resposta = this.alunoService.deletarAluno(1L);
         
-        verify(this.alunoCursoRepository).saveAll(listaAlunoCurso);
+        verify(this.alunoCursoRepository).save(listaAlunoCurso.get(0));
         assertTrue(resposta.isDesativada());
     }
 
@@ -281,13 +286,9 @@ class AlunoServiceTest {
     @DisplayName("Deve ser possível reativar a conta de um aluno")
     void givenTenhoUmAlunoIdDeUmaContaAlunoDesativadaWhenExecutoReativarContaThenReativarConta() {
         this.alunoMock.setDesativada(true);
-        List<AlunoCurso> listaAlunoCurso = List.of(this.alunoCursoMock);
         when(this.alunoRepository.findByIdAndDesativadaTrue(1L)).thenReturn(Optional.of(this.alunoMock));
-        when(this.alunoCursoRepository.findAllByAlunoId(1L)).thenReturn(listaAlunoCurso);
 
-        Aluno resposta = this.alunoService.reativarContaAluno(1L);
-        verify(this.alunoCursoRepository).saveAll(listaAlunoCurso);
-        
+        Aluno resposta = this.alunoService.reativarContaAluno(1L);        
         assertFalse(resposta.isDesativada());
     }
     @Test

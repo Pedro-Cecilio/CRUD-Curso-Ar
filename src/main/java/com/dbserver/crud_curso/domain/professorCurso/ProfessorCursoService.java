@@ -31,7 +31,7 @@ public class ProfessorCursoService {
         Professor professor = professorRepository.findById(professorId)
                 .orElseThrow(() -> new NoSuchElementException("Professor não encontrado"));
 
-        if (this.verificarSeProfessoEstaCadastradoNoCurso(professorId, cursoId)) {
+        if (this.verificarSeProfessorEstaCadastradoNoCurso(professorId, cursoId)) {
             ProfessorCurso professorCurso = this.professorCursoRepository
                     .findByProfessorIdAndCursoId(professorId, cursoId).get();
             if (professorCurso.isAtivo()) {
@@ -53,7 +53,7 @@ public class ProfessorCursoService {
 
     public ProfessorCurso atualizarStatusAtivoProfessor(Long professorId, Long cursoId, boolean ativo) {
 
-        if (!this.verificarSeProfessoEstaCadastradoNoCurso(professorId, cursoId)) {
+        if (!this.verificarSeProfessorEstaCadastradoNoCurso(professorId, cursoId)) {
             throw new NoSuchElementException("Professor não está cadastrado no curso");
         }
         ProfessorCurso professorCurso = this.professorCursoRepository
@@ -87,7 +87,7 @@ public class ProfessorCursoService {
                 .orElseThrow(() -> new NoSuchElementException("Professor não está cadastrado no curso"));
     }
 
-    public boolean verificarSeProfessoEstaCadastradoNoCurso(Long professorId, Long cursoId) {
+    public boolean verificarSeProfessorEstaCadastradoNoCurso(Long professorId, Long cursoId) {
         return this.professorCursoRepository.findByProfessorIdAndCursoId(professorId,
                 cursoId).isPresent();
     }

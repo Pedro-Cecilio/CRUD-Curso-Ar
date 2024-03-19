@@ -12,15 +12,18 @@ import com.dbserver.crud_curso.domain.aluno.AlunoRepository;
 import com.dbserver.crud_curso.domain.professor.dto.AtualizarDadosProfessorDto;
 import com.dbserver.crud_curso.domain.professor.dto.CriarProfessorDto;
 import com.dbserver.crud_curso.domain.professor.dto.ProfessorRespostaDto;
+import com.dbserver.crud_curso.domain.professorCurso.ProfessorCursoRepository;
 
 @Service
 public class ProfessorService {
     private AlunoRepository alunoRepository;
     private ProfessorRepository professorRepository;
+    private ProfessorCursoRepository professorCursoRepository;
 
-    public ProfessorService(AlunoRepository alunoRepository, ProfessorRepository professorRepository) {
+    public ProfessorService(AlunoRepository alunoRepository, ProfessorRepository professorRepository, ProfessorCursoRepository professorCursoRepository) {
         this.alunoRepository = alunoRepository;
         this.professorRepository = professorRepository;
+        this.professorCursoRepository = professorCursoRepository;
     }
 
     public Professor criarProfessor(CriarProfessorDto professorDto) {
@@ -43,6 +46,12 @@ public class ProfessorService {
     public Professor deletarProfessor(Long professorId) {
         Professor professor = this.professorRepository.findByIdAndDesativadaFalse(professorId).orElseThrow(()-> new NoSuchElementException("Professor não encontrado."));
         professor.setDesativada(true);
+        this.professorCursoRepository.findAllByProfessorId(professorId).forEach(professorCurso -> {
+            if(professorCurso.isAtivo()){
+                professorCurso.setAtivo(false);
+                this.professorCursoRepository.save(professorCurso);
+            }
+        });
         this.professorRepository.save(professor);
         return professor;
     }

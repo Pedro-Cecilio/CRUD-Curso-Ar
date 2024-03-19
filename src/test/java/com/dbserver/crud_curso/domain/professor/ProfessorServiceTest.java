@@ -32,6 +32,8 @@ import com.dbserver.crud_curso.domain.aluno.AlunoRepository;
 import com.dbserver.crud_curso.domain.professor.dto.AtualizarDadosProfessorDto;
 import com.dbserver.crud_curso.domain.professor.dto.CriarProfessorDto;
 import com.dbserver.crud_curso.domain.professor.dto.ProfessorRespostaDto;
+import com.dbserver.crud_curso.domain.professorCurso.ProfessorCurso;
+import com.dbserver.crud_curso.domain.professorCurso.ProfessorCursoRepository;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
@@ -43,10 +45,15 @@ class ProfessorServiceTest {
     private ProfessorService professorServiceMock;
 
     @Mock
+    private ProfessorCursoRepository professorCursoRepository;
+    @Mock
     private AlunoRepository alunoRepository;
 
     @Mock
     private ProfessorRepository professorRepository;
+
+    @Mock 
+    private ProfessorCurso professorCurso;
 
     @Mock
     private Pageable pageable;
@@ -82,6 +89,8 @@ class ProfessorServiceTest {
                 null,
                 null);
         this.professorMock = new Professor(criarProfessorDto);
+
+        this.professorCurso = new ProfessorCurso(professorMock, null, false);
     }
 
     @Test
@@ -191,10 +200,12 @@ class ProfessorServiceTest {
     @Test
     @DisplayName("Deve ser possível deletar um professor")
     void givenTenhoUmProfessorIdWhenExecutoMetodoParaDeletarProfessorThenDeletaAluno() {
+        List<ProfessorCurso> listaProfessorCursos = List.of(this.professorCurso);
         when(this.professorRepository.findByIdAndDesativadaFalse(1L)).thenReturn(Optional.of(this.professorMock));
+        when(this.professorCursoRepository.findAllByProfessorId(1L)).thenReturn(listaProfessorCursos);
 
         Professor resposta = this.professorService.deletarProfessor(1L);
-
+        verify(this.professorCursoRepository).save(listaProfessorCursos.get(0));
         assertTrue(resposta.isDesativada());
     }
 
