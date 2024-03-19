@@ -30,6 +30,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.dbserver.crud_curso.domain.aluno.dto.AlunoRespostaDto;
 import com.dbserver.crud_curso.domain.aluno.dto.AtualizarDadosAlunoDto;
 import com.dbserver.crud_curso.domain.aluno.dto.CriarAlunoDto;
+import com.dbserver.crud_curso.domain.alunoCurso.AlunoCurso;
+import com.dbserver.crud_curso.domain.alunoCurso.AlunoCursoRepository;
 import com.dbserver.crud_curso.domain.professor.ProfessorRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,6 +45,12 @@ class AlunoServiceTest {
 
     @Mock
     private AlunoRepository alunoRepository;
+
+    @Mock
+    private AlunoCursoRepository alunoCursoRepository;
+
+    @Mock 
+    private AlunoCurso alunoCursoMock;
 
     @Mock
     private ProfessorRepository professorRepository;
@@ -192,9 +200,12 @@ class AlunoServiceTest {
     @DisplayName("Deve ser possível deletar um aluno")
     void givenTenhoUmAlunoIdWhenExecutoMetodoParaDeletarAlunoThenDeletaAluno() {
         when(this.alunoRepository.findByIdAndDesativadaFalse(1L)).thenReturn(Optional.of(this.alunoMock));
+        List<AlunoCurso> listaAlunoCurso = List.of(this.alunoCursoMock);
+        when(this.alunoCursoRepository.findAllByAlunoId(1L)).thenReturn(listaAlunoCurso);
 
         Aluno resposta = this.alunoService.deletarAluno(1L);
-
+        
+        verify(this.alunoCursoRepository).saveAll(listaAlunoCurso);
         assertTrue(resposta.isDesativada());
     }
 
@@ -270,10 +281,13 @@ class AlunoServiceTest {
     @DisplayName("Deve ser possível reativar a conta de um aluno")
     void givenTenhoUmAlunoIdDeUmaContaAlunoDesativadaWhenExecutoReativarContaThenReativarConta() {
         this.alunoMock.setDesativada(true);
+        List<AlunoCurso> listaAlunoCurso = List.of(this.alunoCursoMock);
         when(this.alunoRepository.findByIdAndDesativadaTrue(1L)).thenReturn(Optional.of(this.alunoMock));
+        when(this.alunoCursoRepository.findAllByAlunoId(1L)).thenReturn(listaAlunoCurso);
 
         Aluno resposta = this.alunoService.reativarContaAluno(1L);
-
+        verify(this.alunoCursoRepository).saveAll(listaAlunoCurso);
+        
         assertFalse(resposta.isDesativada());
     }
     @Test

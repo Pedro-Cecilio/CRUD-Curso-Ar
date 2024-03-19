@@ -13,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "aluno_curso")
@@ -33,6 +34,10 @@ public class AlunoCurso {
     @Column(nullable = false)
     private StatusMatricula statusMatricula;
 
+    @Setter
+    @Column(nullable = false)
+    private boolean desativada = false;
+
     public AlunoCurso(Aluno aluno, Curso curso){
         this.aluno = aluno;
         this.curso = curso;
@@ -46,4 +51,6 @@ public class AlunoCurso {
             throw new IllegalArgumentException("Status de matrícula inválido");
         }
     }
+
+    
 }
