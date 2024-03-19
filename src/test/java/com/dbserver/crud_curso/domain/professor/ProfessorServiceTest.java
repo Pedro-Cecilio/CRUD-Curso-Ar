@@ -134,7 +134,7 @@ class ProfessorServiceTest {
     @Test
     @DisplayName("Deve ser possível atualizar os dados de um professor")
     void givenTenhoUmAtualizarDadosProfessorDtoWhenExecutoMetodoParaAtualizarThenAtualizarDados() {
-        when(this.professorRepository.findById(1L)).thenReturn(Optional.of(this.professorMock));
+        when(this.professorRepository.findByIdAndDesativadaFalse(1L)).thenReturn(Optional.of(this.professorMock));
 
         Professor professor = this.professorService.atualizarProfessor(atualizarDadosProfessorDtoTodosDados, 1L);
 
@@ -148,7 +148,7 @@ class ProfessorServiceTest {
     @Test
     @DisplayName("Deve ser possível atualizar somente um dado de um professor")
     void givenTenhoUmAtualizarDadosProfessorDtoComApenasUmDadoWhenExecutoMetodoParaAtualizarThenAtualizarDados() {
-        when(this.professorRepository.findById(1L)).thenReturn(Optional.of(this.professorMock));
+        when(this.professorRepository.findByIdAndDesativadaFalse(1L)).thenReturn(Optional.of(this.professorMock));
 
         Professor professor = this.professorService.atualizarProfessor(atualizarDadosProfessorDtoUmDado, 1L);
 
@@ -161,7 +161,7 @@ class ProfessorServiceTest {
     @Test
     @DisplayName("Deve falhar ao tentar atualizar um professor inexistete")
     void givenTenhoUmAtualizarDadosProfessorDtoEProfessorIdInexistenteWhenExecutoMetodoParaAtualizarThenLancarErro() {
-        when(this.professorRepository.findById(1L)).thenReturn(Optional.empty());
+        when(this.professorRepository.findByIdAndDesativadaFalse(1L)).thenReturn(Optional.empty());
 
         assertThrows(NoSuchElementException.class, () -> this.professorService.atualizarProfessor(atualizarDadosProfessorDtoUmDado, 1L));
     }
@@ -180,7 +180,7 @@ class ProfessorServiceTest {
     @DisplayName("Deve falhar ao tentar atualizar um aluno com dados incorretos")
     void givenTenhoUmAtualizarDadosAlunoDtoComDadosInvalidosWhenExecutoAtualizarAlunoThenLancarUmErro(String senha,
             String nome, String sobrenome, Long idade, String grauAcademico) {
-        when(this.professorRepository.findById(1L)).thenReturn(Optional.of(this.professorMock));
+        when(this.professorRepository.findByIdAndDesativadaFalse(1L)).thenReturn(Optional.of(this.professorMock));
         AtualizarDadosProfessorDto atualizarDadosProfessorDto2 = new AtualizarDadosProfessorDto(senha, nome, sobrenome, idade,
                 grauAcademico);
 
@@ -191,17 +191,17 @@ class ProfessorServiceTest {
     @Test
     @DisplayName("Deve ser possível deletar um professor")
     void givenTenhoUmProfessorIdWhenExecutoMetodoParaDeletarProfessorThenDeletaAluno() {
-        when(this.professorRepository.findById(1L)).thenReturn(Optional.of(this.professorMock));
+        when(this.professorRepository.findByIdAndDesativadaFalse(1L)).thenReturn(Optional.of(this.professorMock));
 
-        this.professorService.deletarProfessor(1L);
+        Professor resposta = this.professorService.deletarProfessor(1L);
 
-        verify(this.professorRepository).delete(this.professorMock);
+        assertTrue(resposta.isDesativada());
     }
 
     @Test
     @DisplayName("Não deve ser possível deletar um professor inexistente")
     void givenTenhoUmProfessorIdQueNaoExisteWhenExecutoMetodoParaDeletarProfessorThenLancarUmErro() {
-        when(this.professorRepository.findById(1L)).thenReturn(Optional.empty());
+        when(this.professorRepository.findByIdAndDesativadaFalse(1L)).thenReturn(Optional.empty());
 
         assertThrows(NoSuchElementException.class, () -> this.professorService.deletarProfessor(1L));
     }
@@ -210,7 +210,7 @@ class ProfessorServiceTest {
     @DisplayName("Deve ser possível listar todos professores")
     void givenPossuoProfessoresCadastradosWhenExecutoMetodoParaListarTodosProfessoresThenRetornarListaDeProfessores() {
         List<Professor> listaDeProfessores = List.of(this.professorMock, this.professorMock);
-        when(this.professorRepository.findAll(pageable)).thenReturn(new PageImpl<>(listaDeProfessores));
+        when(this.professorRepository.findAllByDesativadaFalse(pageable)).thenReturn(new PageImpl<>(listaDeProfessores));
 
         List<ProfessorRespostaDto> resposta = this.professorService.listarTodosProfessores(pageable);
 
@@ -221,7 +221,7 @@ class ProfessorServiceTest {
     @DisplayName("Deve retornar uma lista vazia quando não houver professores cadastrados, ao listar todos professores")
     void givenNaoPossuoProfessoresCadastradosWhenExecutoMetodoParaListarTodosProfessoresThenRetornarListaVazia() {
         List<Professor> listaDeProfessores = List.of();
-        when(this.professorRepository.findAll(pageable)).thenReturn(new PageImpl<>(listaDeProfessores));
+        when(this.professorRepository.findAllByDesativadaFalse(pageable)).thenReturn(new PageImpl<>(listaDeProfessores));
 
         List<ProfessorRespostaDto> resposta = this.professorService.listarTodosProfessores(pageable);
 
@@ -231,7 +231,7 @@ class ProfessorServiceTest {
     @Test
     @DisplayName("Deve ser possivel buscar aluno pelo id")
     void givenPossuoProfessorIdWhenExecutoMetodoParaPegarProfessorThenRetornarProfessor() {
-        when(this.professorRepository.findById(1L)).thenReturn(Optional.of(this.professorMock));
+        when(this.professorRepository.findByIdAndDesativadaFalse(1L)).thenReturn(Optional.of(this.professorMock));
 
         ProfessorRespostaDto resposta = this.professorService.pegarProfessor(1L);
 
@@ -244,7 +244,7 @@ class ProfessorServiceTest {
     @Test
     @DisplayName("Deve lançar um erro ao buscar pelo id um professor que não existe")
     void givenPossuoProfessorIdInexistenteWhenExecutoMetodoParaPegarProfessorThenLancarUmErro() {
-        when(this.professorRepository.findById(1L)).thenReturn(Optional.empty());
+        when(this.professorRepository.findByIdAndDesativadaFalse(1L)).thenReturn(Optional.empty());
 
         assertThrows(NoSuchElementException.class, () -> this.professorService.pegarProfessor(1L));
     }
