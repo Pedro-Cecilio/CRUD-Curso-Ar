@@ -11,6 +11,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.AlgorithmMismatchException;
 import com.auth0.jwt.exceptions.IncorrectClaimException;
 import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.MissingClaimException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
@@ -61,6 +62,8 @@ public class TokenService {
             throw new ValidarJwtExeption("Reivindicação ausente no token JWT", e);
         } catch (IncorrectClaimException e) {
             throw new ValidarJwtExeption("Reivindicação incorreta no token JWT", e);
+        }catch(JWTDecodeException e) {
+            throw new ValidarJwtExeption("Erro ao validar token: "+ e.getMessage());
         }
     }
 

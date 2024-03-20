@@ -7,13 +7,14 @@ import com.dbserver.crud_curso.domain.aluno.AlunoService;
 import com.dbserver.crud_curso.domain.aluno.dto.AlunoRespostaDto;
 import com.dbserver.crud_curso.domain.aluno.dto.AtualizarDadosAlunoDto;
 import com.dbserver.crud_curso.domain.aluno.dto.CriarAlunoDto;
-import com.dbserver.crud_curso.domain.pessoa.Pessoa;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 
 import java.util.NoSuchElementException;
 import java.util.List;
 
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +25,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 
 @RestController
 @RequestMapping(value = "/aluno")
@@ -43,6 +42,7 @@ public class AlunoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(resposta);
     }
 
+    @SecurityRequirement(name = "bearer-key")
     @PutMapping("/{id}")
     public ResponseEntity<AlunoRespostaDto> atualizarAluno(@RequestBody AtualizarDadosAlunoDto alunoDto,
             @PathVariable("id") String id) {
@@ -56,6 +56,7 @@ public class AlunoController {
         }
     }
 
+    @SecurityRequirement(name = "bearer-key")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> excluirAluno(@PathVariable("id") String id) {
         try {
@@ -66,12 +67,15 @@ public class AlunoController {
             throw new NoSuchElementException("Aluno não encontrado.");
         }
     }
-    
+
+    @SecurityRequirement(name = "bearer-key")
     @GetMapping()
-    public ResponseEntity<List<AlunoRespostaDto>> listarTodosAlunos(Pageable pageable) {
+    public ResponseEntity<List<AlunoRespostaDto>> listarTodosAlunos(@ParameterObject Pageable pageable) {
         List<AlunoRespostaDto> listaDeAlunos = this.alunoService.listarTodosAlunos(pageable);
         return ResponseEntity.ok(listaDeAlunos);
     }
+
+    @SecurityRequirement(name = "bearer-key")
     @GetMapping("/{id}")
     public ResponseEntity<AlunoRespostaDto> buscarAluno(@PathVariable("id") String id) {
         try {
@@ -81,5 +85,5 @@ public class AlunoController {
             throw new NoSuchElementException("Aluno não encontrado.");
         }
     }
-    
+
 }

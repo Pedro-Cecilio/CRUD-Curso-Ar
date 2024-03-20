@@ -45,16 +45,16 @@ public abstract class Pessoa implements UserDetails {
     @Column(nullable = false)
     private boolean desativada = false;
 
-
-
     @Transient
     private List<SimpleGrantedAuthority> autoridades = new ArrayList<>();
 
-    public Pessoa(String email, String senha, SimpleGrantedAuthority autoridade, String nome, String sobrenome,
+    protected Pessoa() {
+    }
+
+    public Pessoa(String email, String senha, String nome, String sobrenome,
             Long idade) {
         this.setEmail(email);
         this.setSenha(senha);
-        this.autoridades.add(autoridade);
         this.setNome(nome);
         this.setSobrenome(sobrenome);
         this.setIdade(idade);
@@ -69,7 +69,7 @@ public abstract class Pessoa implements UserDetails {
     }
 
     public void setEmail(String email) {
-        if(!Utils.validarRegex(Utils.REGEX_EMAIL, email)){
+        if (!Utils.validarRegex(Utils.REGEX_EMAIL, email)) {
             throw new IllegalArgumentException("Email com formato inválido");
         }
         this.email = email;
@@ -77,12 +77,13 @@ public abstract class Pessoa implements UserDetails {
 
     public void setSenha(String senha) {
         Utils utils = new Utils();
-        if(utils.validarSenha(senha, this.senha)) return;
+        if (utils.validarSenha(senha, this.senha))
+            return;
         if (senha == null)
             throw new IllegalArgumentException("Senha deve ser informada");
         if (senha.trim().length() < 8)
             throw new IllegalArgumentException("Senha deve conter 8 caracteres no mínimo");
-        
+
         this.senha = utils.encriptarSenha(senha);
     }
 
@@ -112,7 +113,7 @@ public abstract class Pessoa implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return this.autoridades;
     }
 
     @Override

@@ -1,5 +1,8 @@
 package com.dbserver.crud_curso.domain.professor;
 
+import java.util.Collection;
+import java.util.List;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import com.dbserver.crud_curso.domain.enums.GrauAcademico;
 import com.dbserver.crud_curso.domain.pessoa.Pessoa;
@@ -19,11 +22,11 @@ public class Professor extends Pessoa {
 
     public Professor(String email, String senha, String nome, String sobrenome,
             Long idade, String grauAcademico) {
-        super(email, senha, autoridade, nome, sobrenome, idade);
+        super(email, senha, nome, sobrenome, idade);
         this.setGrauAcademico(grauAcademico);
     }
     public Professor(CriarProfessorDto dto){
-        super(dto.email(), dto.senha(), autoridade, dto.nome(), dto.sobrenome(), dto.idade());
+        super(dto.email(), dto.senha(), dto.nome(), dto.sobrenome(), dto.idade());
         this.setGrauAcademico(dto.grauAcademico());
     }
     
@@ -40,4 +43,8 @@ public class Professor extends Pessoa {
         }
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(autoridade);
+    }
 }
