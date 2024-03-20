@@ -1,19 +1,28 @@
 package com.dbserver.crud_curso.domain.curso;
 
+import com.dbserver.crud_curso.domain.alunoCurso.AlunoCurso;
 import com.dbserver.crud_curso.domain.curso.dto.AtualizarDadosCursoDto;
 import com.dbserver.crud_curso.domain.curso.dto.CriarCursoDto;
 import com.dbserver.crud_curso.domain.enums.GrauAcademico;
 import com.dbserver.crud_curso.domain.enums.GrauEscolaridade;
+import com.dbserver.crud_curso.domain.professorCurso.ProfessorCurso;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.util.List;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Curso {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +40,14 @@ public class Curso {
     @Column(nullable = false)
     private GrauAcademico grauAcademicoMinimo;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "curso", cascade = CascadeType.REMOVE)
+    private List<ProfessorCurso> professores;
+    
+    @JsonIgnore
+    @OneToMany(mappedBy = "curso", cascade = CascadeType.REMOVE)
+    private List<AlunoCurso> alunos;
+    
     public Curso(CriarCursoDto dto) {
         setTitulo(dto.titulo());
         setDuracaoMeses(dto.duracaoMeses());

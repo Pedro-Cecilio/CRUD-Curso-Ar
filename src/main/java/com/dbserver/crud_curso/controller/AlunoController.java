@@ -29,6 +29,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RestController
 @RequestMapping(value = "/aluno")
 public class AlunoController {
+    private static final String MENSAGEM_NAO_ENCONTRADO = "Aluno não encontrado.";
+
+
     private AlunoService alunoService;
 
     public AlunoController(AlunoService alunoService) {
@@ -42,6 +45,17 @@ public class AlunoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(resposta);
     }
 
+    @PostMapping("/reativar/{id}")
+    public ResponseEntity<String> reativarContaAluno(@PathVariable("id") String id) {
+        try {
+            Long idLong = Long.parseLong(id);
+            this.alunoService.reativarContaAluno(idLong);
+            return ResponseEntity.status(HttpStatus.OK).body("Conta reativada com sucesso!");
+        } catch (NumberFormatException e) {
+            throw new NoSuchElementException(MENSAGEM_NAO_ENCONTRADO);
+        }
+    }
+
     @SecurityRequirement(name = "bearer-key")
     @PutMapping("/{id}")
     public ResponseEntity<AlunoRespostaDto> atualizarAluno(@RequestBody AtualizarDadosAlunoDto alunoDto,
@@ -52,7 +66,7 @@ public class AlunoController {
             AlunoRespostaDto resposta = new AlunoRespostaDto(aluno);
             return ResponseEntity.status(HttpStatus.OK).body(resposta);
         } catch (NumberFormatException e) {
-            throw new NoSuchElementException("Aluno não encontrado.");
+            throw new NoSuchElementException(MENSAGEM_NAO_ENCONTRADO);
         }
     }
 
@@ -64,7 +78,7 @@ public class AlunoController {
             this.alunoService.deletarAluno(idLong);
             return ResponseEntity.status(HttpStatus.OK).body("Aluno deletado com sucesso");
         } catch (NumberFormatException e) {
-            throw new NoSuchElementException("Aluno não encontrado.");
+            throw new NoSuchElementException(MENSAGEM_NAO_ENCONTRADO);
         }
     }
 
@@ -82,7 +96,7 @@ public class AlunoController {
             Long idLong = Long.parseLong(id);
             return ResponseEntity.status(HttpStatus.OK).body(this.alunoService.pegarAluno(idLong));
         } catch (NumberFormatException e) {
-            throw new NoSuchElementException("Aluno não encontrado.");
+            throw new NoSuchElementException(MENSAGEM_NAO_ENCONTRADO);
         }
     }
 

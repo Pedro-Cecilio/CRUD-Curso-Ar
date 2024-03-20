@@ -32,12 +32,14 @@ public class SecurityConfig {
                 .csrf(csfr -> csfr.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/login", "/aluno/reativar/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/aluno").permitAll()
-                        .requestMatchers("/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/professor").permitAll()
                         .requestMatchers("/aluno/**").hasAuthority("ALUNO")
+                        .requestMatchers("/professor/**").hasAuthority("PROFESSOR")
+                        .requestMatchers("/curso/**").hasAuthority("PROFESSOR")
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
                 .cors(cors -> cors.configurationSource(this.corsConfigurationSource()))
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

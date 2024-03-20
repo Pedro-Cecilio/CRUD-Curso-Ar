@@ -75,7 +75,7 @@ class ProfessorCursoServiceTest {
         when(this.professorRepository.findById(1L)).thenReturn(Optional.of(this.professorMock));
         when(this.professorCursoRepository.findByProfessorIdAndCursoId(1L, 1L)).thenReturn(Optional.empty());
 
-        ProfessorCurso resposta = this.professorCursoService.cadastrarProfessorNoCurso(1L, 1L);
+        ProfessorCurso resposta = this.professorCursoService.cadastrarProfessorNoCurso(1L, 1L, false);
 
         assertEquals(this.professorMock.getEmail(), resposta.getProfessor().getEmail());
         assertEquals(this.professorMock.getSenha(), resposta.getProfessor().getSenha());
@@ -105,7 +105,7 @@ class ProfessorCursoServiceTest {
         when(this.professorCursoRepository.findByProfessorIdAndCursoId(1L, 1L))
                 .thenReturn(Optional.of(this.professorCursoMock));
 
-        ProfessorCurso resposta = this.professorCursoService.cadastrarProfessorNoCurso(1L, 1L);
+        ProfessorCurso resposta = this.professorCursoService.cadastrarProfessorNoCurso(1L, 1L, false);
 
         assertEquals(this.professorMock.getEmail(), resposta.getProfessor().getEmail());
         assertEquals(this.professorMock.getSenha(), resposta.getProfessor().getSenha());
@@ -134,14 +134,14 @@ class ProfessorCursoServiceTest {
                 .thenReturn(Optional.of(this.professorCursoMock));
 
         assertThrows(IllegalArgumentException.class,
-                () -> this.professorCursoService.cadastrarProfessorNoCurso(1L, 1L));
+                () -> this.professorCursoService.cadastrarProfessorNoCurso(1L, 1L, false));
     }
 
     @Test
     @DisplayName("Não deve ser possível cadastrar um professor em um curso inexistente")
     void givenTenhoUmProfessorIdExistenteEUmCursoIdInexistenteWhenCadastroProfessorNoCursoThenRetornarErro() {
         when(this.cursoRepository.findById(1L)).thenReturn(Optional.empty());
-        assertThrows(NoSuchElementException.class, () -> this.professorCursoService.cadastrarProfessorNoCurso(1L, 1L));
+        assertThrows(NoSuchElementException.class, () -> this.professorCursoService.cadastrarProfessorNoCurso(1L, 1L, false));
     }
 
     @Test
@@ -149,7 +149,7 @@ class ProfessorCursoServiceTest {
     void givenTenhoUmProfessorIdInexistenteEUmCursoIdExistenteWhenCadastroProfessorNoCursoThenRetornarErro() {
         when(this.cursoRepository.findById(1L)).thenReturn(Optional.of(this.cursoBacharelMock));
         when(this.professorRepository.findById(1L)).thenReturn(Optional.empty());
-        assertThrows(NoSuchElementException.class, () -> this.professorCursoService.cadastrarProfessorNoCurso(1L, 1L));
+        assertThrows(NoSuchElementException.class, () -> this.professorCursoService.cadastrarProfessorNoCurso(1L, 1L, false));
     }
 
     @Test
@@ -160,7 +160,7 @@ class ProfessorCursoServiceTest {
         when(this.professorCursoRepository.findByProfessorIdAndCursoId(1L, 1L))
                 .thenReturn(Optional.of(this.professorCursoMock));
         assertThrows(IllegalArgumentException.class,
-                () -> this.professorCursoService.cadastrarProfessorNoCurso(1L, 1L));
+                () -> this.professorCursoService.cadastrarProfessorNoCurso(1L, 1L, false));
     }
 
     @Test

@@ -6,22 +6,30 @@ import java.util.List;
 import java.util.Collection;
 import com.dbserver.crud_curso.domain.aluno.dto.AtualizarDadosAlunoDto;
 import com.dbserver.crud_curso.domain.aluno.dto.CriarAlunoDto;
+import com.dbserver.crud_curso.domain.alunoCurso.AlunoCurso;
 import com.dbserver.crud_curso.domain.enums.GrauEscolaridade;
 import com.dbserver.crud_curso.domain.pessoa.Pessoa;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Aluno extends Pessoa {
     private static final SimpleGrantedAuthority autoridade = new SimpleGrantedAuthority("ALUNO");
 
     @Column(nullable = false)
     private GrauEscolaridade grauEscolaridade;
 
-    protected Aluno() {
-    }
+    @JsonIgnore
+    @OneToMany(mappedBy = "aluno", cascade = CascadeType.REMOVE)
+    private List<AlunoCurso> cursosCadastrado;
 
     public Aluno(String email, String senha, String nome, String sobrenome,
             Long idade, String grauEscolaridade) {

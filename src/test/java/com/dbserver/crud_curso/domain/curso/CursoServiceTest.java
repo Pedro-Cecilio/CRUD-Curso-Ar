@@ -3,7 +3,6 @@ package com.dbserver.crud_curso.domain.curso;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import java.util.stream.Stream;
@@ -27,8 +26,8 @@ import com.dbserver.crud_curso.domain.curso.dto.AtualizarDadosCursoDto;
 import com.dbserver.crud_curso.domain.curso.dto.CriarCursoDto;
 import com.dbserver.crud_curso.domain.professor.Professor;
 import com.dbserver.crud_curso.domain.professor.ProfessorRepository;
-import com.dbserver.crud_curso.domain.professorCurso.ProfessorCurso;
 import com.dbserver.crud_curso.domain.professorCurso.ProfessorCursoRepository;
+import com.dbserver.crud_curso.domain.professorCurso.ProfessorCursoService;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
@@ -43,6 +42,9 @@ class CursoServiceTest {
     private ProfessorRepository professorRepository;
     @Mock
     private ProfessorCursoRepository professorCursoRepository;
+
+    @Mock
+    private ProfessorCursoService professorCursoService;
 
     @Mock
     private Pageable pageable;
@@ -87,7 +89,7 @@ class CursoServiceTest {
         when(this.professorRepository.findById(1L)).thenReturn(Optional.of(this.professorMock));
         Curso curso = this.cursoService.criarCurso(this.criarCursoDto, 1L);
         verify(this.cursoRepository).save(curso); 
-        verify(this.professorCursoRepository).save(any(ProfessorCurso.class));
+        verify(this.professorCursoService).cadastrarProfessorNoCurso(this.professorMock.getId(), curso.getId(), true);
         assertEquals(this.criarCursoDto.titulo(), curso.getTitulo());
         assertEquals(this.criarCursoDto.duracaoMeses(), curso.getDuracaoMeses());
         assertEquals(this.criarCursoDto.grauAcademicoMinimo(), curso.getGrauAcademicoMinimo().toString());

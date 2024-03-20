@@ -27,21 +27,22 @@ public class AutenticacaoService {
     }
 
     public String autenticar(Autenticacao autenticacao) {
+        String respostaErro = "Dados de login inválidos";
         Optional<Professor> professor = professorRepository.findByEmail(autenticacao.getEmail());
         if (professor.isPresent()) {
             return professor
                     .filter(pessoa -> this.compararSenha(autenticacao.getSenha(), pessoa.getSenha()))
                     .map(pessoa -> tokenService.gerarToken(pessoa))
-                    .orElseThrow(() -> new BadCredentialsException("Dados de login inválidos"));
+                    .orElseThrow(() -> new BadCredentialsException(respostaErro));
         }
         Optional<Aluno> aluno = alunoRepository.findByEmail(autenticacao.getEmail());
         if (aluno.isPresent()) {
             return aluno
                     .filter(pessoa -> this.compararSenha(autenticacao.getSenha(), pessoa.getSenha()))
                     .map(pessoa -> tokenService.gerarToken(pessoa))
-                    .orElseThrow(() -> new BadCredentialsException("Dados de login inválidos"));
+                    .orElseThrow(() -> new BadCredentialsException(respostaErro));
         }
-        throw new BadCredentialsException("Dados de login inválidos");
+        throw new BadCredentialsException(respostaErro);
     }
 
     public boolean compararSenha(String senhaEsperada, String atual) {

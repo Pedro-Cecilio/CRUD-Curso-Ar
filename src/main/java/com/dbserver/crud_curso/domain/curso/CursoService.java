@@ -10,39 +10,42 @@ import com.dbserver.crud_curso.domain.curso.dto.AtualizarDadosCursoDto;
 import com.dbserver.crud_curso.domain.curso.dto.CriarCursoDto;
 import com.dbserver.crud_curso.domain.professor.Professor;
 import com.dbserver.crud_curso.domain.professor.ProfessorRepository;
-import com.dbserver.crud_curso.domain.professorCurso.ProfessorCurso;
-import com.dbserver.crud_curso.domain.professorCurso.ProfessorCursoRepository;
+import com.dbserver.crud_curso.domain.professorCurso.ProfessorCursoService;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class CursoService {
+    private static final String MENSAGEM_NAO_ENCONTRADO = "Curso não encontrado.";
 
     private CursoRepository cursoRepository;
+    private ProfessorCursoService professorCursoService;
     private ProfessorRepository professorRepository;
-    private ProfessorCursoRepository professorCursoRepository;
 
-    public CursoService(CursoRepository cursoRepository, ProfessorRepository professorRepository, ProfessorCursoRepository professorCursoRepository) {
+    public CursoService(CursoRepository cursoRepository, ProfessorRepository professorRepository, ProfessorCursoService professorCursoService) {
         this.cursoRepository = cursoRepository;
         this.professorRepository = professorRepository;
+        this.professorCursoService = professorCursoService;
     }
-
+    
+    @Transactional
     public Curso criarCurso(CriarCursoDto cursoDto, Long professorId) {
         Professor professor = this.professorRepository.findById(professorId).orElseThrow(()->new NoSuchElementException("Professor não encontrado"));
         Curso curso = new Curso(cursoDto);
         this.cursoRepository.save(curso);
-        ProfessorCurso professorCurso = new ProfessorCurso(professor, curso, true);
-        this.professorCursoRepository.save(professorCurso);
+        this.professorCursoService.cadastrarProfessorNoCurso(professor.getId(), curso.getId(), true);
         return curso;
     }
 
     public Curso atualizarCurso(AtualizarDadosCursoDto novosDados, Long cursoId) {
-        Curso curso = this.cursoRepository.findById(cursoId).orElseThrow(()->new NoSuchElementException("Curso não encontrado"));
+        Curso curso = this.cursoRepository.findById(cursoId).orElseThrow(()->new NoSuchElementException(MENSAGEM_NAO_ENCONTRADO));
         curso.atualizarDados(novosDados);
         this.cursoRepository.save(curso);
         return curso;
     }
 
     public void deletarCurso(Long cursoId) {
-        Curso curso = this.cursoRepository.findById(cursoId).orElseThrow(()->new NoSuchElementException("Curso não encontrado"));
+        Curso curso = this.cursoRepository.findById(cursoId).orElseThrow(()->new NoSuchElementException(MENSAGEM_NAO_ENCONTRADO));
         this.cursoRepository.delete(curso);
     }
 
@@ -52,7 +55,6 @@ public class CursoService {
     }
 
     public Curso pegarCurso(Long cursoId) {
-        Curso curso = this.cursoRepository.findById(cursoId).orElseThrow(()->new NoSuchElementException("Curso não encontrado"));
-        return curso;
+        return this.cursoRepository.findById(cursoId).orElseThrow(()->new NoSuchElementException(MENSAGEM_NAO_ENCONTRADO));
     }
 }

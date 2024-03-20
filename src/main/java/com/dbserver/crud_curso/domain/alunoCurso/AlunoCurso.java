@@ -3,8 +3,6 @@ package com.dbserver.crud_curso.domain.alunoCurso;
 import com.dbserver.crud_curso.domain.aluno.Aluno;
 import com.dbserver.crud_curso.domain.curso.Curso;
 import com.dbserver.crud_curso.domain.enums.StatusMatricula;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,21 +11,24 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "aluno_curso")
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AlunoCurso {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne
     @JoinColumn(name = "aluno_id", nullable = false)
     private Aluno aluno;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne
     @JoinColumn(name = "curso_id", nullable = false)
     private Curso curso;
     

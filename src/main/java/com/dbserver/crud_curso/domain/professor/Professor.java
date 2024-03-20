@@ -8,17 +8,26 @@ import com.dbserver.crud_curso.domain.enums.GrauAcademico;
 import com.dbserver.crud_curso.domain.pessoa.Pessoa;
 import com.dbserver.crud_curso.domain.professor.dto.AtualizarDadosProfessorDto;
 import com.dbserver.crud_curso.domain.professor.dto.CriarProfessorDto;
+import com.dbserver.crud_curso.domain.professorCurso.ProfessorCurso;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Professor extends Pessoa {
     private static final SimpleGrantedAuthority autoridade = new SimpleGrantedAuthority("PROFESSOR");
     @Column(nullable = false)
     private GrauAcademico grauAcademico;
 
+    @OneToMany(mappedBy = "professor", cascade = CascadeType.REMOVE)
+    private List<ProfessorCurso> cursosMinistrados;
 
     public Professor(String email, String senha, String nome, String sobrenome,
             Long idade, String grauAcademico) {

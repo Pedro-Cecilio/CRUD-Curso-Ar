@@ -24,7 +24,7 @@ public class ProfessorCursoService {
         this.professorCursoRepository = professorCursoRepository;
     }
 
-    public ProfessorCurso cadastrarProfessorNoCurso(Long professorId, Long cursoId) {
+    public ProfessorCurso cadastrarProfessorNoCurso(Long professorId, Long cursoId, boolean criador) {
         Curso curso = cursoRepository.findById(cursoId)
                 .orElseThrow(() -> new NoSuchElementException("Curso não encontrado"));
 
@@ -46,7 +46,7 @@ public class ProfessorCursoService {
 
         }
 
-        ProfessorCurso novoProfessorCurso = new ProfessorCurso(professor, curso, false);
+        ProfessorCurso novoProfessorCurso = new ProfessorCurso(professor, curso, criador);
         this.professorCursoRepository.save(novoProfessorCurso);
         return novoProfessorCurso;
     }

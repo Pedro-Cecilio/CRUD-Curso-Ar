@@ -26,10 +26,10 @@ public class AlunoCursoService {
 
     public AlunoCurso cadastrarAlunoNoCurso(Long alunoId, Long cursoId) {
         Curso curso = this.cursoRepository.findById(cursoId)
-                .orElseThrow(() -> new NoSuchElementException("Curso não encontrado"));
+                .orElseThrow(() -> new NoSuchElementException("Curso não encontrado."));
 
         Aluno aluno = this.alunoRepository.findByIdAndDesativadaFalse(alunoId)
-                .orElseThrow(() -> new NoSuchElementException("Aluno não encontrado"));
+                .orElseThrow(() -> new NoSuchElementException("Aluno não encontrado."));
 
         if (verificarSeAlunoPossuiCadastroNoCurso(alunoId, cursoId)) {
             throw new IllegalArgumentException("O aluno já está cadastrado neste curso.");
