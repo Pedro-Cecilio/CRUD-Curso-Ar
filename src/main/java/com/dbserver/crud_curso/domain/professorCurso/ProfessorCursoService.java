@@ -50,7 +50,7 @@ public class ProfessorCursoService {
         this.professorCursoRepository.save(novoProfessorCurso);
         return novoProfessorCurso;
     }
-
+    
     public ProfessorCurso atualizarStatusAtivoProfessor(Long professorId, Long cursoId, boolean ativo) {
 
         if (!this.verificarSeProfessorEstaCadastradoNoCurso(professorId, cursoId)) {
@@ -62,7 +62,6 @@ public class ProfessorCursoService {
         professorCurso.setAtivo(ativo);
         this.professorCursoRepository.save(professorCurso);
         return professorCurso;
-
     }
 
     public void removerProfessorDoCurso(Long professorId, Long cursoId) {

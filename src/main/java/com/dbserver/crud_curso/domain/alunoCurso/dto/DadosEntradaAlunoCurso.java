@@ -2,7 +2,7 @@ package com.dbserver.crud_curso.domain.alunoCurso.dto;
 
 import jakarta.validation.constraints.NotNull;
 
-public record AlunoCursoDadosEntradaDto(
+public record DadosEntradaAlunoCurso(
         @NotNull(message = "id do curso deve ser informado")
         Long cursoId,
         
