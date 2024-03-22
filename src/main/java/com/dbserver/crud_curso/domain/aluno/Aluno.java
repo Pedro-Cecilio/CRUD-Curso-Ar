@@ -53,7 +53,7 @@ public class Aluno extends Pessoa {
         try {
             this.grauEscolaridade = GrauEscolaridade.valueOf(grauEscolaridade);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Grau de escolaridade inválido");
+            throw new IllegalArgumentException("Grau escolar inválido");
         }
     }
 

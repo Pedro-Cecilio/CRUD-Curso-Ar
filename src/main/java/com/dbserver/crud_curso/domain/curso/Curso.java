@@ -87,7 +87,7 @@ public class Curso {
         try {
             this.grauEscolarMinimo = GrauEscolaridade.valueOf(grauEscolarMinimo);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Grau de escolaridade mínimo inválido");
+            throw new IllegalArgumentException("Grau escolar mínimo inválido");
         }
     }
 

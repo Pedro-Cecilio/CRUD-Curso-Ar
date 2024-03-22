@@ -184,9 +184,9 @@ class AlunoControllerTest {
                                                 "ENSINO_SUPERIOR_COMPLETO",
                                                 "Idade deve ser informada"),
                                 Arguments.of("exemplo@email.com", "12345678", "João", "Silva", 25L, "BACHAREL",
-                                                "Grau de escolaridade inválido"),
+                                                "Grau escolar inválido"),
                                 Arguments.of("exemplo@email.com", "12345678", "João", "Silva", 25L, null,
-                                                "Grau de escolaridade deve ser informado"));
+                                                "Grau escolar deve ser informado"));
         }
 
         @ParameterizedTest
@@ -287,7 +287,7 @@ class AlunoControllerTest {
                                 Arguments.of("12345678", "João", "Silva", 6L, "ENSINO_SUPERIOR_COMPLETO",
                                                 "Idade deve ser maior do que 6 e menor que 110"),
                                 Arguments.of("12345678", "João", "Silva", 25L, "BACHAREL",
-                                                "Grau de escolaridade inválido"));
+                                                "Grau escolar inválido"));
         }
 
         @ParameterizedTest

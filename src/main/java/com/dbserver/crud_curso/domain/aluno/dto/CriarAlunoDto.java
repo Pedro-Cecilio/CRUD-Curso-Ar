@@ -26,7 +26,7 @@ public record CriarAlunoDto(
     @NotNull(message = "Idade deve ser informada")
     Long idade,
 
-    @NotBlank(message = "Grau de escolaridade deve ser informado")
+    @NotBlank(message = "Grau escolar deve ser informado")
     String grauEscolaridade
 
 ) {
