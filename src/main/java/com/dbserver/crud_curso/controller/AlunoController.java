@@ -52,7 +52,7 @@ public class AlunoController {
             this.alunoService.reativarContaAluno(idLong);
             return ResponseEntity.status(HttpStatus.OK).body("Conta reativada com sucesso!");
         } catch (NumberFormatException e) {
-            throw new NoSuchElementException(MENSAGEM_NAO_ENCONTRADO);
+            throw new NoSuchElementException("Aluno não encontrado ou não possui conta desativada.");
         }
     }
 
@@ -83,7 +83,7 @@ public class AlunoController {
     }
 
     @SecurityRequirement(name = "bearer-key")
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<AlunoRespostaDto>> listarTodosAlunos(@ParameterObject Pageable pageable) {
         List<AlunoRespostaDto> listaDeAlunos = this.alunoService.listarTodosAlunos(pageable);
         return ResponseEntity.ok(listaDeAlunos);

@@ -15,9 +15,12 @@ import com.dbserver.crud_curso.domain.alunoCurso.AlunoCursoRepository;
 import com.dbserver.crud_curso.domain.enums.StatusMatricula;
 import com.dbserver.crud_curso.domain.professor.Professor;
 import com.dbserver.crud_curso.domain.professor.ProfessorRepository;
+import jakarta.transaction.Transactional;
 
 @Service
 public class AlunoService {
+    private static final String MENSAGEM_NAO_ENCONTRADO = "Aluno não encontrado.";
+
     private AlunoRepository alunoRepository;
     private ProfessorRepository professorRepository;
     private AlunoCursoRepository alunoCursoRepository;
@@ -39,14 +42,15 @@ public class AlunoService {
     }
 
     public Aluno atualizarAluno(AtualizarDadosAlunoDto novosDados, Long alunoId) {
-        Aluno aluno = this.alunoRepository.findByIdAndDesativadaFalse(alunoId).orElseThrow(()->new NoSuchElementException("Aluno não encontrado."));
+        Aluno aluno = this.alunoRepository.findByIdAndDesativadaFalse(alunoId).orElseThrow(()->new NoSuchElementException(MENSAGEM_NAO_ENCONTRADO));
         aluno.atualizarDadosAluno(novosDados);
         this.alunoRepository.save(aluno);
         return aluno;
     }
 
+    @Transactional
     public Aluno deletarAluno(Long alunoId) {
-        Aluno aluno = this.alunoRepository.findByIdAndDesativadaFalse(alunoId).orElseThrow(()->new NoSuchElementException("Aluno não encontrado."));
+        Aluno aluno = this.alunoRepository.findByIdAndDesativadaFalse(alunoId).orElseThrow(()->new NoSuchElementException(MENSAGEM_NAO_ENCONTRADO));
         aluno.setDesativada(true);
         this.alunoCursoRepository.findAllByAlunoId(alunoId).stream().forEach(alunoCurso -> {
             if(StatusMatricula.ATIVO.equals(alunoCurso.getStatusMatricula())){
@@ -64,7 +68,7 @@ public class AlunoService {
     }
 
     public AlunoRespostaDto pegarAluno(Long alunoId) {
-        Aluno aluno = this.alunoRepository.findByIdAndDesativadaFalse(alunoId).orElseThrow(()->new NoSuchElementException("Aluno não encontrado."));
+        Aluno aluno = this.alunoRepository.findByIdAndDesativadaFalse(alunoId).orElseThrow(()->new NoSuchElementException(MENSAGEM_NAO_ENCONTRADO));
 
         return new AlunoRespostaDto(aluno);
     }
@@ -76,7 +80,7 @@ public class AlunoService {
     }
 
     public Aluno reativarContaAluno(long alunoId){
-        Aluno aluno = this.alunoRepository.findByIdAndDesativadaTrue(alunoId).orElseThrow(()->new NoSuchElementException("Aluno não encontrado ou não possui conta ativa."));
+        Aluno aluno = this.alunoRepository.findByIdAndDesativadaTrue(alunoId).orElseThrow(()->new NoSuchElementException("Aluno não encontrado ou não possui conta desativada."));
         aluno.setDesativada(false);
         this.alunoRepository.save(aluno);
         return aluno;

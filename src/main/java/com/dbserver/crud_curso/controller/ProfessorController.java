@@ -44,6 +44,17 @@ public class ProfessorController {
         return ResponseEntity.status(HttpStatus.CREATED).body(resposta);
     }
 
+    @PostMapping("/reativar/{id}")
+    public ResponseEntity<String> reativarContaProfessor(@PathVariable("id") String id) {
+        try {
+            Long idLong = Long.parseLong(id);
+            this.professorService.reativarContaProfessor(idLong);
+            return ResponseEntity.status(HttpStatus.OK).body("Conta reativada com sucesso!");
+        } catch (NumberFormatException e) {
+            throw new NoSuchElementException("Professor não encontrado ou não possui conta desativada.");
+        }
+    }
+
     @SecurityRequirement(name = "bearer-key")
     @PutMapping("/{id}")
     public ResponseEntity<ProfessorRespostaDto> atualizarProfessor(@RequestBody AtualizarDadosProfessorDto professorDto,
@@ -71,13 +82,13 @@ public class ProfessorController {
     }
 
     @SecurityRequirement(name = "bearer-key")
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<ProfessorRespostaDto>> listarTodosProfessores(@ParameterObject Pageable pageable) {
         List<ProfessorRespostaDto> listaDeProfessores = this.professorService.listarTodosProfessores
         (pageable);
         return ResponseEntity.ok(listaDeProfessores);
     }
-
+    
     @SecurityRequirement(name = "bearer-key")
     @GetMapping("/{id}")
     public ResponseEntity<ProfessorRespostaDto> buscarAluno(@PathVariable("id") String id) {

@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.dbserver.crud_curso.utils.Utils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -51,7 +52,7 @@ public abstract class Pessoa implements UserDetails {
     protected Pessoa() {
     }
 
-    public Pessoa(String email, String senha, String nome, String sobrenome,
+    protected Pessoa(String email, String senha, String nome, String sobrenome,
             Long idade) {
         this.setEmail(email);
         this.setSenha(senha);
@@ -111,36 +112,37 @@ public abstract class Pessoa implements UserDetails {
         this.idade = idade;
     }
 
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.autoridades;
     }
-
+    @JsonIgnore
     @Override
     public String getPassword() {
         return this.senha;
     }
-
+    @JsonIgnore
     @Override
     public String getUsername() {
         return this.email;
     }
-
+    @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
-
+    @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
-
+    @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
-
+    @JsonIgnore
     @Override
     public boolean isEnabled() {
         return true;

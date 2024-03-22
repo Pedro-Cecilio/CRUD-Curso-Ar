@@ -16,6 +16,8 @@ import com.dbserver.crud_curso.domain.professorCurso.ProfessorCursoRepository;
 
 @Service
 public class ProfessorService {
+    private static final String MENSAGEM_NAO_ENCONTRADO = "Professor não encontrado.";
+
     private AlunoRepository alunoRepository;
     private ProfessorRepository professorRepository;
     private ProfessorCursoRepository professorCursoRepository;
@@ -37,14 +39,14 @@ public class ProfessorService {
     }
 
     public Professor atualizarProfessor(AtualizarDadosProfessorDto novosDados, Long professorId) {
-        Professor professor = this.professorRepository.findByIdAndDesativadaFalse(professorId).orElseThrow(()-> new NoSuchElementException("Professor não encontrado."));
+        Professor professor = this.professorRepository.findByIdAndDesativadaFalse(professorId).orElseThrow(()-> new NoSuchElementException(MENSAGEM_NAO_ENCONTRADO));
         professor.atualizarDadosProfessor(novosDados);
         this.professorRepository.save(professor);
         return professor;
     }
 
     public Professor deletarProfessor(Long professorId) {
-        Professor professor = this.professorRepository.findByIdAndDesativadaFalse(professorId).orElseThrow(()-> new NoSuchElementException("Professor não encontrado."));
+        Professor professor = this.professorRepository.findByIdAndDesativadaFalse(professorId).orElseThrow(()-> new NoSuchElementException(MENSAGEM_NAO_ENCONTRADO));
         professor.setDesativada(true);
         this.professorCursoRepository.findAllByProfessorId(professorId).forEach(professorCurso -> {
             if(professorCurso.isAtivo()){
@@ -62,7 +64,7 @@ public class ProfessorService {
     }
 
     public ProfessorRespostaDto pegarProfessor(Long professorId) {
-        Professor professor = this.professorRepository.findByIdAndDesativadaFalse(professorId).orElseThrow(()-> new NoSuchElementException("Professor não encontrado."));
+        Professor professor = this.professorRepository.findByIdAndDesativadaFalse(professorId).orElseThrow(()-> new NoSuchElementException(MENSAGEM_NAO_ENCONTRADO));
         return new ProfessorRespostaDto(professor);
     }
 
@@ -72,7 +74,7 @@ public class ProfessorService {
         return (professor.isPresent() || alunoExistente.isPresent());
     }
     public Professor reativarContaProfessor(long professorId){
-        Professor professor = this.professorRepository.findByIdAndDesativadaTrue(professorId).orElseThrow(()->new NoSuchElementException("Professor não encontrado ou não possui conta ativa."));
+        Professor professor = this.professorRepository.findByIdAndDesativadaTrue(professorId).orElseThrow(()->new NoSuchElementException("Professor não encontrado ou não possui conta desativada."));
         professor.setDesativada(false);
         this.professorRepository.save(professor);
         return professor;

@@ -32,7 +32,7 @@ public class SecurityConfig {
                 .csrf(csfr -> csfr.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/login", "/aluno/reativar/**").permitAll()
+                        .requestMatchers("/login", "/aluno/reativar/**", "/professor/reativar/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/aluno").permitAll()
                         .requestMatchers(HttpMethod.POST, "/professor").permitAll()
                         .requestMatchers("/aluno/**").hasAuthority("ALUNO")
