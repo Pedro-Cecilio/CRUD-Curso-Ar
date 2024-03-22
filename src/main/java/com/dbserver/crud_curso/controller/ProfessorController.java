@@ -91,7 +91,7 @@ public class ProfessorController {
     
     @SecurityRequirement(name = "bearer-key")
     @GetMapping("/{id}")
-    public ResponseEntity<ProfessorRespostaDto> buscarAluno(@PathVariable("id") String id) {
+    public ResponseEntity<ProfessorRespostaDto> buscarProfessor(@PathVariable("id") String id) {
         try {
             Long idLong = Long.parseLong(id);
             return ResponseEntity.status(HttpStatus.OK).body(this.professorService.pegarProfessor(idLong));
