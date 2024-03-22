@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
 @RestController
 @RequestMapping(value = "/alunoCurso")
 public class AlunoCursoController {
@@ -62,20 +61,31 @@ public class AlunoCursoController {
     }
 
     @SecurityRequirement(name = "bearer-key")
-    @PatchMapping("/trancarMatricula")
-    public ResponseEntity<AlunoCurso> trancarMatricula(@RequestBody @Valid DadosEntradaAlunoCurso dadosDto) {
-        AlunoCurso resposta = this.alunoCursoService.atualizarStatusMatricula(dadosDto.alunoId(), dadosDto.cursoId(),
-                StatusMatricula.INATIVO.toString());
-        return ResponseEntity.status(HttpStatus.OK).body(resposta);
-
+    @PatchMapping("/trancarMatricula/{id}")
+    public ResponseEntity<AlunoCurso> trancarMatricula(@PathVariable("id") String cursoId) {
+        try {
+            Long cursoIdLong = Long.parseLong(cursoId);
+            Long alunoid = this.utils.pegarIdDaPessoaLogada();
+            AlunoCurso resposta = this.alunoCursoService.atualizarStatusMatricula(alunoid, cursoIdLong,
+                    StatusMatricula.INATIVO.toString());
+            return ResponseEntity.status(HttpStatus.OK).body(resposta);
+        } catch (NumberFormatException e) {
+            throw new NoSuchElementException(MENSAGEM_NAO_ENCONTRADO);
+        }
     }
 
     @SecurityRequirement(name = "bearer-key")
-    @PatchMapping("/reativarMatricula")
-    public ResponseEntity<AlunoCurso> reativarMatricula(@RequestBody @Valid DadosEntradaAlunoCurso dadosDto) {
-        AlunoCurso resposta = this.alunoCursoService.atualizarStatusMatricula(dadosDto.alunoId(), dadosDto.cursoId(),
-                StatusMatricula.ATIVO.toString());
-        return ResponseEntity.status(HttpStatus.OK).body(resposta);
+    @PatchMapping("/reativarMatricula/{id}")
+    public ResponseEntity<AlunoCurso> reativarMatricula(@PathVariable("id") String cursoId) {
+        try {
+            Long cursoIdLong = Long.parseLong(cursoId);
+            Long alunoid = this.utils.pegarIdDaPessoaLogada();
+            AlunoCurso resposta = this.alunoCursoService.atualizarStatusMatricula(alunoid, cursoIdLong,
+            StatusMatricula.ATIVO.toString());
+            return ResponseEntity.status(HttpStatus.OK).body(resposta);
+        }catch (NumberFormatException e) {
+            throw new NoSuchElementException(MENSAGEM_NAO_ENCONTRADO);
+        }
     }
 
     @SecurityRequirement(name = "bearer-key")

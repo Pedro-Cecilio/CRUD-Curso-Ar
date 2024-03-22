@@ -37,7 +37,7 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/aluno/reativar/**", "/professor/reativar/**").permitAll()
 
                         .requestMatchers(HttpMethod.POST, "/aluno", "/professor").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/professor/**", "/aluno/**", "/alunoCurso/**", "/professorCurso/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/professor/**", "/aluno/**", "/alunoCurso/**", "/professorCurso/**", "/curso/**").authenticated()
 
                         .requestMatchers(HttpMethod.POST, "/alunoCurso/**").hasAuthority(ALUNO_AUTORIDADE)
                         .requestMatchers(HttpMethod.PATCH, "/alunoCurso/formar").hasAuthority(PROFESSOR_AUTORIDADE)
