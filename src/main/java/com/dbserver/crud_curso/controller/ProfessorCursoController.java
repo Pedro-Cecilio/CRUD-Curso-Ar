@@ -67,7 +67,7 @@ public class ProfessorCursoController {
             Long professorId = utils.pegarIdDaPessoaLogada();
             Long cursoIdLong = Long.parseLong(cursoId);
             this.professorCursoService.atualizarStatusAtivoProfessor(professorId, cursoIdLong, true);
-            return ResponseEntity.status(HttpStatus.OK).body("Professor removido do curso com sucesso!");
+            return ResponseEntity.status(HttpStatus.OK).body("Professor reativado no curso com sucesso!");
         } catch (NumberFormatException e) {
             throw new NoSuchElementException(MENSAGEM_NAO_ENCONTRADO);
         }
@@ -88,7 +88,7 @@ public class ProfessorCursoController {
     }
 
     @SecurityRequirement(name = "bearer-key")
-    @GetMapping
+    @GetMapping("/professor")
     public ResponseEntity<ProfessorCurso> pegarProfessorDoCurso(@ParameterObject DadosEntradaProfessorCurso query) {
         ProfessorCurso resposta = this.professorCursoService.pegarProfessorDoCurso(query.professorId(),
                 query.cursoId());

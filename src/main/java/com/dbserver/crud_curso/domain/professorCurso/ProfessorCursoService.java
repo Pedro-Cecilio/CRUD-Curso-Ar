@@ -26,7 +26,7 @@ public class ProfessorCursoService {
 
     public ProfessorCurso cadastrarProfessorNoCurso(Long professorId, Long cursoId, boolean criador) {
         Curso curso = cursoRepository.findById(cursoId)
-                .orElseThrow(() -> new NoSuchElementException("Curso não encontrado"));
+                .orElseThrow(() -> new NoSuchElementException("Curso não encontrado."));
 
         Professor professor = professorRepository.findById(professorId)
                 .orElseThrow(() -> new NoSuchElementException("Professor não encontrado"));
