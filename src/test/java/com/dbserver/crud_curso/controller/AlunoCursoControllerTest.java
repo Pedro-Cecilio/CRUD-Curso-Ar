@@ -38,330 +38,304 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 class AlunoCursoControllerTest {
 
-    private MockMvc mockMvc;
-    private JacksonTester<DadosEntradaAlunoCurso> dadosEntradaAlunoCursoJson;
-    private AlunoRepository alunoRepository;
-    private CursoRepository cursoRepository;
-    private ProfessorRepository professorRepository;
-    private AlunoCursoRepository alunoCursoRepository;
-    private List<Curso> cursosSalvos;
-    private List<Aluno> alunosSalvos;
-    private DadosEntradaAlunoCurso dadosEntradaAlunoCurso;
-    private Professor professor;
-    private ObjectMapper objectMapper;
+        private MockMvc mockMvc;
+        private JacksonTester<DadosEntradaAlunoCurso> dadosEntradaAlunoCursoJson;
+        private AlunoRepository alunoRepository;
+        private CursoRepository cursoRepository;
+        private ProfessorRepository professorRepository;
+        private AlunoCursoRepository alunoCursoRepository;
+        private List<Curso> cursosSalvos;
+        private List<Aluno> alunosSalvos;
+        private DadosEntradaAlunoCurso dadosEntradaAlunoCurso;
+        private Professor professor;
+        private ObjectMapper objectMapper;
+        private AlunoCurso alunoCurso;
 
-    @Autowired
-    public AlunoCursoControllerTest(MockMvc mockMvc,
-            CursoRepository cursoRepository, AlunoCursoRepository alunoCursoRepository,
-            AlunoRepository alunoRepository, ProfessorRepository professorRepository,
-            JacksonTester<DadosEntradaAlunoCurso> dadosEntradaAlunoCursoJson,
-            ObjectMapper objectMapper) {
-        this.mockMvc = mockMvc;
-        this.cursoRepository = cursoRepository;
-        this.alunoRepository = alunoRepository;
-        this.alunoCursoRepository = alunoCursoRepository;
-        this.professorRepository = professorRepository;
-        this.dadosEntradaAlunoCursoJson = dadosEntradaAlunoCursoJson;
-        this.objectMapper = objectMapper;
+        @Autowired
+        public AlunoCursoControllerTest(MockMvc mockMvc,
+                        CursoRepository cursoRepository, AlunoCursoRepository alunoCursoRepository,
+                        AlunoRepository alunoRepository, ProfessorRepository professorRepository,
+                        JacksonTester<DadosEntradaAlunoCurso> dadosEntradaAlunoCursoJson,
+                        ObjectMapper objectMapper) {
+                this.mockMvc = mockMvc;
+                this.cursoRepository = cursoRepository;
+                this.alunoRepository = alunoRepository;
+                this.alunoCursoRepository = alunoCursoRepository;
+                this.professorRepository = professorRepository;
+                this.dadosEntradaAlunoCursoJson = dadosEntradaAlunoCursoJson;
+                this.objectMapper = objectMapper;
 
-    }
+        }
 
-    private void popularBanco() {
-        Aluno alunoSuperiorCompleto = new Aluno(
-                "exemplo@email.com",
-                "senha123",
-                "João",
-                "Silva",
-                25L,
-                "ENSINO_SUPERIOR_COMPLETO");
-        Aluno alunoMedioIncompleto = new Aluno(
-                "exemplo2@email.com",
-                "senha123",
-                "Lucas",
-                "Silva",
-                16L,
-                "ENSINO_MEDIO_INCOMPLETO");
+        private void popularBanco() {
+                Aluno alunoSuperiorCompleto = new Aluno(
+                                "exemplo@email.com",
+                                "senha123",
+                                "João",
+                                "Silva",
+                                25L,
+                                "ENSINO_SUPERIOR_COMPLETO");
+                Aluno alunoMedioIncompleto = new Aluno(
+                                "exemplo2@email.com",
+                                "senha123",
+                                "Lucas",
+                                "Silva",
+                                16L,
+                                "ENSINO_MEDIO_INCOMPLETO");
 
-        Professor professor = new Professor("professorContaAtivada@email.com",
-                "senha123",
-                "João",
-                "Silva",
-                25L,
-                "BACHAREL");
-        // Professor professor2 = new Professor("professorContaAtivada2@email.com",
-        // "senha123",
-        // "João",
-        // "Silva",
-        // 25L,
-        // "LICENCIATURA");
-        Curso cursoMedioIncompleto = new Curso("Curso de Lógica de Programação",
-                6L,
-                "ENSINO_MEDIO_INCOMPLETO",
-                "BACHAREL");
-        Curso cursoSuperiorIncompleto = new Curso("Curso de QA",
-                12L,
-                "ENSINO_SUPERIOR_INCOMPLETO",
-                "MESTRE");
+                Professor professor = new Professor("professorContaAtivada@email.com",
+                                "senha123",
+                                "João",
+                                "Silva",
+                                25L,
+                                "BACHAREL");
 
-        this.professor = this.professorRepository.save(professor);
-        this.alunosSalvos = this.alunoRepository.saveAll(List.of(alunoSuperiorCompleto, alunoMedioIncompleto));
-        this.cursosSalvos = this.cursoRepository.saveAll(List.of(cursoMedioIncompleto, cursoSuperiorIncompleto));
-    }
+                Curso cursoMedioIncompleto = new Curso("Curso de Lógica de Programação",
+                                6L,
+                                "ENSINO_MEDIO_INCOMPLETO",
+                                "BACHAREL");
+                Curso cursoSuperiorIncompleto = new Curso("Curso de QA",
+                                12L,
+                                "ENSINO_SUPERIOR_INCOMPLETO",
+                                "MESTRE");
 
-    @BeforeEach
-    void prepararTeste() {
+                this.professor = this.professorRepository.save(professor);
+                this.alunosSalvos = this.alunoRepository.saveAll(List.of(alunoSuperiorCompleto, alunoMedioIncompleto));
+                this.cursosSalvos = this.cursoRepository
+                                .saveAll(List.of(cursoMedioIncompleto, cursoSuperiorIncompleto));
 
-        this.popularBanco();
-    }
+                AlunoCurso alunoCurso = new AlunoCurso(alunoSuperiorCompleto, cursoMedioIncompleto);
+                this.alunoCurso = this.alunoCursoRepository.save(alunoCurso);
+        }
 
-    @AfterEach
-    void limparTeste() {
-        this.alunoRepository.deleteAll();
-        this.cursoRepository.deleteAll();
-        this.professorRepository.deleteAll();
-        this.alunoCursoRepository.deleteAll();
-    }
+        @BeforeEach
+        void prepararTeste() {
 
-    @Test
-    @DisplayName("Como aluno, deve ser possível se cadastrar em um curso")
-    void givenEstouLogadoComoAlunoEPossuoIdDoCursoWhenTentoMeCadastrarEmUmCursoThenRetornarStatus200()
-            throws Exception {
-        Aluno alunoLogado = TesteUtils.login(this.alunosSalvos.get(0));
-        Curso cursoASerCadastrado = this.cursosSalvos.get(0);
-        mockMvc
-                .perform(MockMvcRequestBuilders.post("/alunoCurso/%d".formatted(cursoASerCadastrado.getId())))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").isNumber())
-                .andExpect(jsonPath("$.aluno.id").value(alunoLogado.getId()))
-                .andExpect(jsonPath("$.curso.id").value(cursoASerCadastrado.getId()))
-                .andExpect(jsonPath("$.statusMatricula").value(StatusMatricula.ATIVO.toString()));
-    }
+                this.popularBanco();
+        }
 
-    @Test
-    @DisplayName("Não deve ser possível se cadastrar em um curso inexistente")
-    void givenEstouLogadoComoAlunoEPossuoIdDeUmCursoInexistenteWhenTentoMeCadastrarEmUmCursoThenRetornarStatus404()
-            throws Exception {
-        TesteUtils.login(this.alunosSalvos.get(0));
-        mockMvc
-                .perform(MockMvcRequestBuilders.post("/alunoCurso/%d".formatted(500)))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.erro").value("Curso não encontrado."));
-    }
+        @AfterEach
+        void limparTeste() {
+                this.alunoRepository.deleteAll();
+                this.cursoRepository.deleteAll();
+                this.professorRepository.deleteAll();
+                this.alunoCursoRepository.deleteAll();
+        }
 
-    @Test
-    @DisplayName("Como professor, deve ser possível formar um aluno no curso")
-    void givenEstouLogadoComoProfessorEPossuoDadosEntradaAlunoCursoEAlunoIdWhenTentoFormarOAlunoNoCursoThenRetornarStatus200()
-            throws Exception {
-        TesteUtils.login(this.professor);
-        Aluno alunoASeFormar = this.alunosSalvos.get(0);
-        Curso cursoASerCadastrado = this.cursosSalvos.get(0);
-        AlunoCurso alunoCadastradoNoCurso = new AlunoCurso(alunoASeFormar, cursoASerCadastrado);
-        this.alunoCursoRepository.save(alunoCadastradoNoCurso);
+        @Test
+        @DisplayName("Como aluno, deve ser possível se cadastrar em um curso")
+        void givenEstouLogadoComoAlunoEPossuoIdDoCursoWhenTentoMeCadastrarEmUmCursoThenRetornarStatus200()
+                        throws Exception {
+                Aluno alunoLogado = TesteUtils.login(this.alunosSalvos.get(1));
+                Curso cursoASerCadastrado = this.cursosSalvos.get(0);
+                mockMvc
+                                .perform(MockMvcRequestBuilders
+                                                .post("/alunoCurso/%d".formatted(cursoASerCadastrado.getId())))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.id").isNumber())
+                                .andExpect(jsonPath("$.aluno.id").value(alunoLogado.getId()))
+                                .andExpect(jsonPath("$.curso.id").value(cursoASerCadastrado.getId()))
+                                .andExpect(jsonPath("$.statusMatricula").value(StatusMatricula.ATIVO.toString()));
+        }
 
-        System.out.println(alunoASeFormar.getId());
-        this.dadosEntradaAlunoCurso = new DadosEntradaAlunoCurso(alunoCadastradoNoCurso.getCurso().getId(),
-                alunoCadastradoNoCurso.getAluno().getId());
+        @Test
+        @DisplayName("Não deve ser possível se cadastrar em um curso inexistente")
+        void givenEstouLogadoComoAlunoEPossuoIdDeUmCursoInexistenteWhenTentoMeCadastrarEmUmCursoThenRetornarStatus404()
+                        throws Exception {
+                TesteUtils.login(this.alunosSalvos.get(0));
+                mockMvc
+                                .perform(MockMvcRequestBuilders.post("/alunoCurso/%d".formatted(500)))
+                                .andExpect(status().isNotFound())
+                                .andExpect(jsonPath("$.erro").value("Curso não encontrado."));
+        }
 
-        String json = this.dadosEntradaAlunoCursoJson.write(this.dadosEntradaAlunoCurso).getJson();
+        @Test
+        @DisplayName("Como professor, deve ser possível formar um aluno no curso")
+        void givenEstouLogadoComoProfessorEPossuoDadosEntradaAlunoCursoEAlunoIdWhenTentoFormarOAlunoNoCursoThenRetornarStatus200()
+                        throws Exception {
+                TesteUtils.login(this.professor);
 
-        mockMvc
-                .perform(MockMvcRequestBuilders.patch("/alunoCurso/formar")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.statusMatricula").value(StatusMatricula.FORMADO.toString()));
-    }
+                this.dadosEntradaAlunoCurso = new DadosEntradaAlunoCurso(this.alunoCurso.getCurso().getId(),
+                                this.alunoCurso.getAluno().getId());
 
-    @Test
-    @DisplayName("Como professor, não deve ser possível formar um aluno que não está cadastrado no curso")
-    void givenEstouLogadoComoProfessorEPossuoDadosEntradaAlunoCursoEAlunoIdInexistenteWhenTentoFormarOAlunoNoCursoThenRetornarStatus200()
-            throws Exception {
-        TesteUtils.login(this.professor);
-        Aluno alunoASeFormar = this.alunosSalvos.get(0);
-        Curso cursoASeFormar = this.cursosSalvos.get(0);
+                String json = this.dadosEntradaAlunoCursoJson.write(this.dadosEntradaAlunoCurso).getJson();
 
-        this.dadosEntradaAlunoCurso = new DadosEntradaAlunoCurso(cursoASeFormar.getId(),
-                alunoASeFormar.getId());
+                mockMvc
+                                .perform(MockMvcRequestBuilders.patch("/alunoCurso/formar")
+                                                .contentType(MediaType.APPLICATION_JSON)
+                                                .content(json))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.statusMatricula").value(StatusMatricula.FORMADO.toString()));
+        }
 
-        String json = this.dadosEntradaAlunoCursoJson.write(this.dadosEntradaAlunoCurso).getJson();
+        @Test
+        @DisplayName("Como professor, não deve ser possível formar um aluno que não está cadastrado no curso")
+        void givenEstouLogadoComoProfessorEPossuoDadosEntradaAlunoCursoEAlunoIdInexistenteWhenTentoFormarOAlunoNoCursoThenRetornarStatus200()
+                        throws Exception {
+                TesteUtils.login(this.professor);
+                Aluno alunoASeFormar = this.alunosSalvos.get(1);
 
-        mockMvc
-                .perform(MockMvcRequestBuilders.patch("/alunoCurso/formar")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.erro").value("O aluno informado não está cadastrado no curso"));
-    }
+                this.dadosEntradaAlunoCurso = new DadosEntradaAlunoCurso(alunoASeFormar.getId(),
+                                this.alunoCurso.getAluno().getId());
 
-    @Test
-    @DisplayName("Como aluno, deve ser possível trancar a matricula de um curso")
-    void givenEstouLogadoComoAlunoEPossuoCursoIdWhenTentoTrancarMatriculaNoCursoThenRetornarStatus200()
-            throws Exception {
-        Aluno alunoASeFormar = TesteUtils.login(this.alunosSalvos.get(0));
-        Curso cursoASeFormar = this.cursosSalvos.get(0);
-        AlunoCurso alunoCadastradoNoCurso = new AlunoCurso(alunoASeFormar, cursoASeFormar);
-        this.alunoCursoRepository.save(alunoCadastradoNoCurso);
+                String json = this.dadosEntradaAlunoCursoJson.write(this.dadosEntradaAlunoCurso).getJson();
 
-        mockMvc
-                .perform(MockMvcRequestBuilders
-                        .patch("/alunoCurso/trancarMatricula/%d".formatted(cursoASeFormar.getId())))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.statusMatricula").value(StatusMatricula.INATIVO.toString()));
-    }
+                mockMvc
+                                .perform(MockMvcRequestBuilders.patch("/alunoCurso/formar")
+                                                .contentType(MediaType.APPLICATION_JSON)
+                                                .content(json))
+                                .andExpect(status().isNotFound())
+                                .andExpect(jsonPath("$.erro").value("O aluno informado não está cadastrado no curso"));
+        }
 
-    @Test
-    @DisplayName("Como aluno, não deve ser possível trancar matrícula em um curso inexistente")
-    void givenEstouLogadoComoAlunoEPossuoCursoIdInexistenteWhenTentoFormarOAlunoNoCursoThenRetornarStatus404()
-            throws Exception {
-        Aluno alunoASeFormar = TesteUtils.login(this.alunosSalvos.get(0));
-        Curso cursoASeFormar = this.cursosSalvos.get(0);
-        AlunoCurso alunoCadastradoNoCurso = new AlunoCurso(alunoASeFormar, cursoASeFormar);
-        this.alunoCursoRepository.save(alunoCadastradoNoCurso);
+        @Test
+        @DisplayName("Como aluno, deve ser possível trancar a matricula de um curso")
+        void givenEstouLogadoComoAlunoEPossuoCursoIdWhenTentoTrancarMatriculaNoCursoThenRetornarStatus200()
+                        throws Exception {
+                TesteUtils.login(this.alunoCurso.getAluno());
+                Curso cursoASeFormar = this.alunoCurso.getCurso();
 
-        mockMvc
-                .perform(MockMvcRequestBuilders
-                        .patch("/alunoCurso/trancarMatricula/%d".formatted(500)))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.erro").value("O aluno informado não está cadastrado no curso"));
-    }
+                mockMvc
+                                .perform(MockMvcRequestBuilders
+                                                .patch("/alunoCurso/trancarMatricula/%d"
+                                                                .formatted(cursoASeFormar.getId())))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.statusMatricula").value(StatusMatricula.INATIVO.toString()));
+        }
 
-    @Test
-    @DisplayName("Como aluno, não deve ser possível trancar matrícula passando como id do curso algo que não seja um long")
-    void givenEstouLogadoComoAlunoEPossuoCursoIdComFormatoInválidoWhenTentoFormarOAlunoNoCursoThenRetornarStatus404()
-            throws Exception {
-        Aluno alunoASeFormar = TesteUtils.login(this.alunosSalvos.get(0));
-        Curso cursoASeFormar = this.cursosSalvos.get(0);
-        AlunoCurso alunoCadastradoNoCurso = new AlunoCurso(alunoASeFormar, cursoASeFormar);
-        this.alunoCursoRepository.save(alunoCadastradoNoCurso);
+        @Test
+        @DisplayName("Como aluno, não deve ser possível trancar matrícula em um curso inexistente")
+        void givenEstouLogadoComoAlunoEPossuoCursoIdInexistenteWhenTentoFormarOAlunoNoCursoThenRetornarStatus404()
+                        throws Exception {
+                TesteUtils.login(this.alunosSalvos.get(0));
 
-        mockMvc
-                .perform(MockMvcRequestBuilders
-                        .patch("/alunoCurso/trancarMatricula/%s".formatted("50ab")))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.erro").value("Curso não encontrado."));
-    }
+                mockMvc
+                                .perform(MockMvcRequestBuilders
+                                                .patch("/alunoCurso/trancarMatricula/%d".formatted(500)))
+                                .andExpect(status().isNotFound())
+                                .andExpect(jsonPath("$.erro").value("O aluno informado não está cadastrado no curso"));
+        }
 
-    @Test
-    @DisplayName("Como aluno, deve ser possível reativar a matricula de um curso")
-    void givenEstouLogadoComoAlunoEPossuoCursoIdWhenTentoReativarMatriculaDoCursoThenRetornarStatus200()
-            throws Exception {
-        Aluno alunoAReativarMatricula = TesteUtils.login(this.alunosSalvos.get(0));
-        Curso cursoAReativarMatricula = this.cursosSalvos.get(0);
-        AlunoCurso alunoCadastradoNoCurso = new AlunoCurso(alunoAReativarMatricula, cursoAReativarMatricula);
-        this.alunoCursoRepository.save(alunoCadastradoNoCurso);
+        @Test
+        @DisplayName("Como aluno, não deve ser possível trancar matrícula passando como id do curso algo que não seja um long")
+        void givenEstouLogadoComoAlunoEPossuoCursoIdComFormatoInválidoWhenTentoFormarOAlunoNoCursoThenRetornarStatus404()
+                        throws Exception {
+                TesteUtils.login(this.alunosSalvos.get(0));
 
-        mockMvc
-                .perform(MockMvcRequestBuilders
-                        .patch("/alunoCurso/reativarMatricula/%d".formatted(cursoAReativarMatricula.getId())))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.statusMatricula").value(StatusMatricula.ATIVO.toString()));
-    }
+                mockMvc
+                                .perform(MockMvcRequestBuilders
+                                                .patch("/alunoCurso/trancarMatricula/%s".formatted("50ab")))
+                                .andExpect(status().isNotFound())
+                                .andExpect(jsonPath("$.erro").value("Curso não encontrado."));
+        }
 
-    @Test
-    @DisplayName("Como aluno, não deve ser possível reativar matrícula em um curso inexistente")
-    void givenEstouLogadoComoAlunoEPossuoCursoIdInexistenteWhenTentoReativarMatriculaThenRetornarStatus404()
-            throws Exception {
-        Aluno alunoAReativarMatricula = TesteUtils.login(this.alunosSalvos.get(0));
-        Curso cursoAReativarMatricula = this.cursosSalvos.get(0);
-        AlunoCurso alunoCadastradoNoCurso = new AlunoCurso(alunoAReativarMatricula, cursoAReativarMatricula);
-        this.alunoCursoRepository.save(alunoCadastradoNoCurso);
+        @Test
+        @DisplayName("Como aluno, deve ser possível reativar a matricula de um curso")
+        void givenEstouLogadoComoAlunoEPossuoCursoIdWhenTentoReativarMatriculaDoCursoThenRetornarStatus200()
+                        throws Exception {
+                TesteUtils.login(this.alunosSalvos.get(0));
+                Curso cursoAReativarMatricula = this.cursosSalvos.get(0);
+                this.alunoCurso.setStatusMatricula(StatusMatricula.INATIVO.toString());
+                this.alunoCursoRepository.save(this.alunoCurso);
 
-        mockMvc
-                .perform(MockMvcRequestBuilders
-                        .patch("/alunoCurso/reativarMatricula/%d".formatted(500)))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.erro").value("O aluno informado não está cadastrado no curso"));
-    }
+                mockMvc
+                                .perform(MockMvcRequestBuilders
+                                                .patch("/alunoCurso/reativarMatricula/%d"
+                                                                .formatted(cursoAReativarMatricula.getId())))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.statusMatricula").value(StatusMatricula.ATIVO.toString()));
+        }
 
-    @Test
-    @DisplayName("Como aluno, não deve ser possível reativar matrícula passando como id do curso algo que não seja um long")
-    void givenEstouLogadoComoAlunoEPossuoCursoIdComFormatoInválidoWhenReativarMatriculaThenRetornarStatus404()
-            throws Exception {
-        Aluno alunoAReativarMatricula = TesteUtils.login(this.alunosSalvos.get(0));
-        Curso cursoAReativarMatricula = this.cursosSalvos.get(0);
-        AlunoCurso alunoCadastradoNoCurso = new AlunoCurso(alunoAReativarMatricula, cursoAReativarMatricula);
-        this.alunoCursoRepository.save(alunoCadastradoNoCurso);
+        @Test
+        @DisplayName("Como aluno, não deve ser possível reativar matrícula em um curso inexistente")
+        void givenEstouLogadoComoAlunoEPossuoCursoIdInexistenteWhenTentoReativarMatriculaThenRetornarStatus404()
+                        throws Exception {
+                TesteUtils.login(this.alunosSalvos.get(0));
 
-        mockMvc
-                .perform(MockMvcRequestBuilders
-                        .patch("/alunoCurso/reativarMatricula/%s".formatted("50ab")))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.erro").value("Curso não encontrado."));
-    }
+                mockMvc
+                                .perform(MockMvcRequestBuilders
+                                                .patch("/alunoCurso/reativarMatricula/%d".formatted(500)))
+                                .andExpect(status().isNotFound())
+                                .andExpect(jsonPath("$.erro").value("O aluno informado não está cadastrado no curso"));
+        }
 
-    @Test
-    @DisplayName("Deve ser possível listar todos alunos cadastrados no curso retornar status 200")
-    void givenPossuoCursoIdWhenEnvioEndPointDeListarTodosAlunosDoCursoThenRetornarStatus200()
-            throws Exception {
-        TesteUtils.login(this.alunosSalvos.get(0));
-        Curso cursoASerBuscado = this.cursosSalvos.get(0);
-        AlunoCurso alunoCadastradoNoCurso = new AlunoCurso(this.alunosSalvos.get(0), cursoASerBuscado);
-        AlunoCurso alunoCadastradoNoCurso2 = new AlunoCurso(this.alunosSalvos.get(1), cursoASerBuscado);
-        List<AlunoCurso> alunosNoCurso = this.alunoCursoRepository
-                .saveAll(List.of(alunoCadastradoNoCurso, alunoCadastradoNoCurso2));
+        @Test
+        @DisplayName("Como aluno, não deve ser possível reativar matrícula passando como id do curso algo que não seja um long")
+        void givenEstouLogadoComoAlunoEPossuoCursoIdComFormatoInválidoWhenReativarMatriculaThenRetornarStatus404()
+                        throws Exception {
+                TesteUtils.login(this.alunosSalvos.get(0));
 
-        MockHttpServletResponse resposta = mockMvc
-                .perform(MockMvcRequestBuilders.get("/alunoCurso/%d".formatted(cursoASerBuscado.getId())))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray())
-                .andReturn().getResponse();
-        List<AlunoCurso> listaAlunoCurso = this.objectMapper.readValue(resposta.getContentAsString(),
-                new TypeReference<List<AlunoCurso>>() {
-                });
-        assertEquals(alunosNoCurso.size(), listaAlunoCurso.size());
-    }
+                mockMvc
+                                .perform(MockMvcRequestBuilders
+                                                .patch("/alunoCurso/reativarMatricula/%s".formatted("50ab")))
+                                .andExpect(status().isNotFound())
+                                .andExpect(jsonPath("$.erro").value("Curso não encontrado."));
+        }
 
-    @Test
-    @DisplayName("Não Deve ser possível listar todos alunos cadastrados no curso ao enviar cursoId no formato inválido retornar status 404")
-    void givenPossuoCursoIdNoFormatoInválidoWhenEnvioEndPointDeListarTodosAlunosDoCursoThenRetornarStatus404()
-            throws Exception {
-        TesteUtils.login(this.alunosSalvos.get(0));
+        @Test
+        @DisplayName("Deve ser possível listar todos alunos cadastrados no curso retornar status 200")
+        void givenPossuoCursoIdWhenEnvioEndPointDeListarTodosAlunosDoCursoThenRetornarStatus200()
+                        throws Exception {
+                TesteUtils.login(this.alunoCurso.getAluno());
+                Curso cursoASerBuscado = this.alunoCurso.getCurso();
+                AlunoCurso novoAlunoNoCurso = new AlunoCurso(this.alunosSalvos.get(1),
+                                cursoASerBuscado);
+                this.alunoCursoRepository.save(novoAlunoNoCurso);
+                List<AlunoCurso> alunosNoCurso = this.alunoCursoRepository.findAllByCursoId(cursoASerBuscado.getId());
 
-        mockMvc
-                .perform(MockMvcRequestBuilders.get("/alunoCurso/%s".formatted("5615fa")))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.erro").value("Curso não encontrado."));
-    }
+                MockHttpServletResponse resposta = mockMvc
+                                .perform(MockMvcRequestBuilders
+                                                .get("/alunoCurso/%d".formatted(cursoASerBuscado.getId())))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$").isArray())
+                                .andReturn().getResponse();
+                List<AlunoCurso> listaAlunoCurso = this.objectMapper.readValue(resposta.getContentAsString(),
+                                new TypeReference<List<AlunoCurso>>() {
+                                });
+                assertEquals(alunosNoCurso.size(), listaAlunoCurso.size());
+        }
 
-    @Test
-    @DisplayName("Deve ser possível buscar por um aluno cadastrado no curso retornar status 200")
-    void givenPossuoUmDadosEntradaAlunoCursoWhenEnvioEndPointDePegarAlunoDoCursoThenRetornarStatus200()
-            throws Exception {
-        TesteUtils.login(this.alunosSalvos.get(0));
-        Curso cursoASerBuscado = this.cursosSalvos.get(0);
-        Aluno alunoASerBuscado = this.alunosSalvos.get(0);
-        AlunoCurso alunoCadastradoNoCurso = new AlunoCurso(alunoASerBuscado, cursoASerBuscado);
-        AlunoCurso alunoCursoSalvo = this.alunoCursoRepository
-                .save(alunoCadastradoNoCurso);
+        @Test
+        @DisplayName("Não Deve ser possível listar todos alunos cadastrados no curso ao enviar cursoId no formato inválido retornar status 404")
+        void givenPossuoCursoIdNoFormatoInválidoWhenEnvioEndPointDeListarTodosAlunosDoCursoThenRetornarStatus404()
+                        throws Exception {
+                TesteUtils.login(this.alunosSalvos.get(0));
 
-        mockMvc
-                .perform(MockMvcRequestBuilders.get("/alunoCurso/aluno")
-                        .param("alunoId",
-                                String.valueOf(alunoASerBuscado.getId()))
-                        .param("cursoId", String.valueOf(cursoASerBuscado.getId())))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(alunoCursoSalvo.getId()))
-                .andExpect(jsonPath("$.aluno.id").value(alunoASerBuscado.getId()));
-    }
+                mockMvc
+                                .perform(MockMvcRequestBuilders.get("/alunoCurso/%s".formatted("5615fa")))
+                                .andExpect(status().isNotFound())
+                                .andExpect(jsonPath("$.erro").value("Curso não encontrado."));
+        }
 
-    @Test
-    @DisplayName("Não deve ser possível buscar por um aluno que não esteja cadastrado no curso informado e deve retornar status 404")
-    void givenPossuoUmDadosEntradaAlunoCursoComAlunoIdNãoPetencenteAoCursoDoCursoIdWhenEnvioEndPointDePegarAlunoDoCursoThenRetornarStatus404()
-            throws Exception {
-        TesteUtils.login(this.alunosSalvos.get(0));
-        Curso cursoASerBuscado = this.cursosSalvos.get(1);
-        Aluno alunoASerBuscado = this.alunosSalvos.get(0);
+        @Test
+        @DisplayName("Deve ser possível buscar por um aluno cadastrado no curso retornar status 200")
+        void givenPossuoUmDadosEntradaAlunoCursoWhenEnvioEndPointDePegarAlunoDoCursoThenRetornarStatus200()
+                        throws Exception {
+                TesteUtils.login(this.alunosSalvos.get(0));
 
-        AlunoCurso alunoCadastradoNoCurso = new AlunoCurso(alunoASerBuscado, cursoASerBuscado);
-        this.alunoCursoRepository
-                .save(alunoCadastradoNoCurso);
+                mockMvc
+                                .perform(MockMvcRequestBuilders.get("/alunoCurso/aluno")
+                                                .param("alunoId",
+                                                                String.valueOf(this.alunoCurso.getAluno().getId()))
+                                                .param("cursoId", String.valueOf(this.alunoCurso.getCurso().getId())))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.id").value(this.alunoCurso.getId()))
+                                .andExpect(jsonPath("$.aluno.id").value(this.alunoCurso.getAluno().getId()));
+        }
 
-        mockMvc
-                .perform(MockMvcRequestBuilders.get("/alunoCurso/aluno")
-                        .param("alunoId", "500")
-                        .param("cursoId", String.valueOf(cursoASerBuscado.getId())))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.erro").value("Aluno não encontrado"));
-    }
+        @Test
+        @DisplayName("Não deve ser possível buscar por um aluno que não esteja cadastrado no curso informado e deve retornar status 404")
+        void givenPossuoUmDadosEntradaAlunoCursoComAlunoIdNãoPetencenteAoCursoDoCursoIdWhenEnvioEndPointDePegarAlunoDoCursoThenRetornarStatus404()
+                        throws Exception {
+                TesteUtils.login(this.alunosSalvos.get(0));
+                Curso cursoASerBuscado = this.cursosSalvos.get(1);
+
+                mockMvc
+                                .perform(MockMvcRequestBuilders.get("/alunoCurso/aluno")
+                                                .param("alunoId", "500")
+                                                .param("cursoId", String.valueOf(cursoASerBuscado.getId())))
+                                .andExpect(status().isNotFound())
+                                .andExpect(jsonPath("$.erro").value("Aluno não encontrado"));
+        }
 
 }

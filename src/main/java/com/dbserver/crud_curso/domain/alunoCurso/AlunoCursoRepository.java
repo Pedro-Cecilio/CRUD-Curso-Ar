@@ -16,5 +16,7 @@ public interface AlunoCursoRepository extends JpaRepository<AlunoCurso, Long>{
 
     List<AlunoCurso> findAllByAlunoId(Long alunoId);
 
-    List<AlunoCurso> findAllByCursoIdAndStatusMatricula(Long id, StatusMatricula statusMatricula, Pageable pageable);
+    List<AlunoCurso> findAllByCursoIdAndStatusMatricula(Long cursoId, StatusMatricula statusMatricula, Pageable pageable);
+
+    List<AlunoCurso> findAllByCursoId(Long cursoId);
 }
