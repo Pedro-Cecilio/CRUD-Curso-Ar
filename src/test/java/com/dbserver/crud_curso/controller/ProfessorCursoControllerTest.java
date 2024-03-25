@@ -143,7 +143,7 @@ class ProfessorCursoControllerTest {
 
     @Test
     @DisplayName("Como professor, não deve ser possível sair de curso em que nã está cadastrado")
-    void givenEstouLogadoComoProfessorEPossuoCursoIdQueNãoEstouCadastradoWhenTentoSairDoCursoThenRetornarStatus404()
+    void givenEstouLogadoComoProfessorEPossuoCursoIdQueNaoEstouCadastradoWhenTentoSairDoCursoThenRetornarStatus404()
             throws Exception {
         TesteUtils.login(this.professoresSalvos.get(0));
 
@@ -155,7 +155,7 @@ class ProfessorCursoControllerTest {
 
     @Test
     @DisplayName("Como professor, não deve ser possível sair de curso ao passar cursoId com formato inválido")
-    void givenEstouLogadoComoProfessorEPossuoCursoIdComFormatoInválidoWhenTentoSairDoCursoThenRetornarStatus404()
+    void givenEstouLogadoComoProfessorEPossuoCursoIdComFormatoInvalidoWhenTentoSairDoCursoThenRetornarStatus404()
             throws Exception {
         TesteUtils.login(this.professoresSalvos.get(0));
 
@@ -256,7 +256,7 @@ class ProfessorCursoControllerTest {
 
     @Test
     @DisplayName("Não deve ser possível buscar por um professor que não esteja cadastrado no curso informado retornar status 404")
-    void givenPossuoUmDadosEntradaProfessorCursoComProfessorIdNãoPertencenteAoCursoInformadoWhenEnvioEndPointDePegarProfessorDoCursoThenRetornarStatus404()
+    void givenPossuoUmDadosEntradaProfessorCursoComProfessorIdNaoPertencenteAoCursoInformadoWhenEnvioEndPointDePegarProfessorDoCursoThenRetornarStatus404()
             throws Exception {
         TesteUtils.login(this.professoresSalvos.get(0));
 
